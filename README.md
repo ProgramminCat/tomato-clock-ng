@@ -1,8 +1,6 @@
-# Tomato Clock - Browser Extension
+# Tomato Clock NG
 
-[![Node CI](https://github.com/samueljun/tomato-clock/workflows/Node%20CI/badge.svg?branch=master)](https://github.com/samueljun/tomato-clock/actions?query=workflow%3A%22Node+CI%22+branch%3Amaster)
-
-Tomato Clock is a simple browser extension for managing your productivity. Use the extension to break down your work into 25 minute 'Tomato' intervals separated by short breaks. Use the long break after completing four Tomato intervals.
+Tomato Clock NG is a simple browser extension for managing your productivity. It is a fork of [samueljun/tomato-clock](https://github.com/samueljun/tomato-clock). Use the extension to break down your work into 25 minute 'Tomato' intervals separated by short breaks. Use the long break after completing four Tomato intervals.
 
 Features:
 
@@ -12,14 +10,12 @@ Features:
 
 You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete. Your stats are synced across devices using the browser's cloud storage support.
 
-Due to a trademark complaint, the extension was renamed from Pomodoro Clock to Tomato Clock.
-
-Please file any issues or feature requests at https://github.com/samueljun/tomato-clock/issues.
+Please file any issues or feature requests at https://github.com/ProgramminCat/tomato-clock-ng/issues.
 
 ## Installation
 
-- [Firefox AMO](https://addons.mozilla.org/firefox/addon/tomato-clock/)
-- [Chrome Web Store](https://chrome.google.com/webstore/detail/tomato-clock/enemipdanmallpjakiehedcgjmibjihj)
+- [Firefox AMO (Coming Soon)](https://example.com)
+- [Chrome Web Store (Coming Soon)](https://example.com)
 
 ## Development
 
@@ -76,7 +72,7 @@ npm run build
 
 ## States export json format
 
-The expected formatting of Tomato Clock's .json files is as follows
+The expected formatting of Tomato Clock NG's .json files is as follows
 
 ```json
 [
