@@ -15,6 +15,7 @@ export default class Panel {
   constructor() {
     this.settings = new Settings();
     this.currentTimeText = document.getElementById("current-time-text");
+    this.presetSelect = document.getElementById("preset-select");
     this.timer = {};
 
     browser.runtime
@@ -28,9 +29,15 @@ export default class Panel {
       });
 
     this.setEventListeners();
+    this.setPresetFromSettings();
   }
 
   setEventListeners() {
+    if (this.presetSelect) {
+      this.presetSelect.addEventListener("change", (e) => {
+        this.onPresetChange(e.target.value);
+      });
+    }
     document.getElementById("tomato-button").addEventListener("click", () => {
       this.setTimer(TIMER_TYPE.TOMATO);
       this.setBackgroundTimer(TIMER_TYPE.TOMATO);
@@ -61,6 +68,51 @@ export default class Panel {
 
     document.getElementById("options-link").addEventListener("click", () => {
       browser.runtime.openOptionsPage();
+    });
+  }
+
+  setPresetFromSettings() {
+    if (!this.presetSelect) return;
+
+    this.settings.getSettings().then((settings) => {
+      const { minutesInTomato, minutesInShortBreak, minutesInLongBreak } = settings;
+
+      const triplet = `${minutesInTomato}-${minutesInShortBreak}-${minutesInLongBreak}`;
+
+      switch (triplet) {
+        case "25-5-15":
+          this.presetSelect.value = "25-5-15";
+          break;
+        case "45-15-30":
+          this.presetSelect.value = "45-15-30";
+          break;
+        case "90-30-45":
+          this.presetSelect.value = "90-30-45";
+          break;
+        default:
+          this.presetSelect.value = "default";
+      }
+    });
+  }
+
+  onPresetChange(value) {
+    if (value === "default") return;
+
+    const map = {
+      "25-5-15": [25, 5, 15],
+      "45-15-30": [45, 15, 30],
+      "90-30-45": [90, 30, 45],
+    };
+
+    const preset = map[value];
+    if (!preset) return;
+
+    const [minutesInTomato, minutesInShortBreak, minutesInLongBreak] = preset;
+
+    this.settings.saveSettings({
+      minutesInTomato,
+      minutesInShortBreak,
+      minutesInLongBreak,
     });
   }
 
