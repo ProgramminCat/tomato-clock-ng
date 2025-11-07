@@ -1,5 +1,5 @@
 import $ from "jquery";
-import Chart from "chart.js";
+import { Chart, registerables } from 'chart.js';
 import moment from "moment";
 import "daterangepicker";
 
@@ -15,6 +15,8 @@ import {
   getFilenameDate,
 } from "../utils/utils";
 import { DATE_UNIT, TIMER_TYPE } from "../utils/constants";
+
+Chart.register(...registerables);
 
 export default class Stats {
   constructor() {
@@ -202,15 +204,14 @@ export default class Stats {
             mode: "nearest",
           },
           scales: {
-            yAxes: [
-              {
-                ticks: {
-                  maxTicksLimit: 5,
-                  suggestedMax: 5,
-                  beginAtZero: true,
-                },
-              },
-            ],
+            y: {
+              type: 'linear',
+              ticks: {
+                maxTicksLimit: 5,
+                suggestedMax: 5,
+                beginAtZero: true
+              }
+            }
           },
           legend: {
             position: "bottom",
@@ -222,7 +223,7 @@ export default class Stats {
 }
 
 $(document).ready(() => {
-  Chart.defaults.global.responsive = true;
+  Chart.defaults.responsive = true;
   const stats = new Stats();
 
   // Date Picker
