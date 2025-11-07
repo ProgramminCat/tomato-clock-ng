@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Tomato Clock NG",
   "version": "__REPLACED_ON_BUILD__",
   "author": "ProgramminCat",
@@ -14,7 +14,7 @@
     "256": "assets/images/tomato-icon-256.png"
   },
 
-  "action": {
+  "browser_action": {
     "default_icon": {
       "16": "assets/images/tomato-icon-16.png",
       "32": "assets/images/tomato-icon-32.png",
@@ -23,7 +23,7 @@
       "128": "assets/images/tomato-icon-128.png",
       "256": "assets/images/tomato-icon-256.png"
     },
-    "default_title": "Tomato Clock",
+    "default_title": "Tomato Clock NG",
     "default_popup": "panel/panel.html"
   },
 
