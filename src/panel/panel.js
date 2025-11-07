@@ -58,6 +58,10 @@ export default class Panel {
     document.getElementById("stats-link").addEventListener("click", () => {
       browser.tabs.create({ url: "/stats/stats.html" });
     });
+
+    document.getElementById("options-link").addEventListener("click", () => {
+      browser.runtime.openOptionsPage();
+    });
   }
 
   resetTimer() {
