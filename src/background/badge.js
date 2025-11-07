@@ -17,9 +17,9 @@ export default class Badge {
   _setBadgeText(text, backgroundColor) {
     // Try-catch because Firefox Android lacks badge support
     try {
-      browser.browserAction.setBadgeText({ text });
-      browser.browserAction.setBadgeBackgroundColor({ color: backgroundColor });
-      browser.browserAction.setBadgeTextColor({ color: "white" });
+      browser.action.setBadgeText({ text });
+      browser.action.setBadgeBackgroundColor({ color: backgroundColor });
+      browser.action.setBadgeTextColor({ color: "white" });
     } catch (ignoredError) {
       return;
     }
