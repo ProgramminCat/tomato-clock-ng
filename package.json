@@ -18,8 +18,8 @@
   "keywords": [
     "WebExtension"
   ],
-  "author": "Samuel Jun",
-  "license": "ISC",
+  "author": "ProgramminCat",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/ProgramminCat/tomato-clock-ng/issues"
   },
