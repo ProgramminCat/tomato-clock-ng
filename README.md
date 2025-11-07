@@ -70,9 +70,9 @@ Run the following command so that webpack can recompile the `/src` files in prod
 npm run build
 ```
 
-## States export json format
+## Statistics JSON format
 
-The expected formatting of Tomato Clock NG's .json files is as follows
+The expected formatting of Tomato Clock NG's .json files that store statistics is as follows
 
 ```json
 [
