@@ -65,6 +65,7 @@ export default class Timer {
             this.notifications.createBrowserNotification(timer.type);
             this.timeline.addAlarmToTimeline(timer.type, timer.totalTime);
             this.resetTimer();
+            browser.runtime.sendMessage({type: "timer-finished"});
           } else {
             const minutesLeft = getMillisecondsToMinutesAndSeconds(
               timeLeft

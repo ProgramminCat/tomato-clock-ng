@@ -18,6 +18,12 @@ import { DATE_UNIT, TIMER_TYPE } from "../utils/constants";
 
 Chart.register(...registerables);
 
+browser.runtime.onMessage.addListener((message) => {
+  if (message.type === "timer-finished") {
+    window.location.reload();
+  }
+});
+
 export default class Stats {
   constructor() {
     // Get DOM Elements
