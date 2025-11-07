@@ -25,16 +25,16 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
 
-- OS: [e.g. Windows, Mac, Linux]
-- Browser: [e.g. Firefox 79, Chrome 84]
-- Extension Version: [e.g. 5.2.0]
+- OS: [e.g. Windows, Linux, MacOS]
+- Browser: [e.g. Firefox 144]
+- Extension Version: [e.g. 6.0.2]
 
 **Smartphone (please complete the following information):**
 
-- Device: [e.g. iPhone6, Google Pixel 4]
-- OS: [e.g. iOS8.1, Android 10]
-- Browser: [e.g. Safari 13, Chrome 84, Firefox 79]
-- Extension Version: [e.g. 5.2.0]
+- Device: [e.g. Google Pixel 9, Samsung S21]
+- OS: [e.g. Android 15]
+- Browser: [e.g. Firefox 144, Zen 1.17.6b]
+- Extension Version: [e.g. 6.0.2]
 
 **Additional context**
 Add any other context about the problem here.
