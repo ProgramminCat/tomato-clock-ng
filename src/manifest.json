@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Tomato Clock",
+  "name": "Tomato Clock NG",
   "version": "__REPLACED_ON_BUILD__",
-  "author": "Samuel Jun",
+  "author": "ProgramminCat",
   "description": "A simple browser extension for managing your productivity.",
 
   "icons": {
@@ -28,7 +28,7 @@
   },
 
   "background": {
-    "service_worker": "background/background.js"
+    "scripts": ["background/background.js"]
   },
 
   "permissions": ["notifications", "storage"],
@@ -63,5 +63,11 @@
   "options_ui": {
     "page": "options/options.html",
     "open_in_tab": false
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@tomatoclockng"
+    }
   }
 }
