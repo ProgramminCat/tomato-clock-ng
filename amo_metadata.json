@@ -1,0 +1,7 @@
+{
+  "version": { "license": "GPL-3.0" },
+  "categories": { "firefox": ["productivity"] },
+  "homepage": {
+    "en-US": "https://github.com/ProgramminCat/tomato-clock-ng"
+  }
+}

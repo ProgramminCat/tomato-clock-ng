@@ -5,8 +5,6 @@
   "author": "ProgramminCat",
   "description": "A simple browser extension for managing your productivity.",
   "homepage_url": "https://github.com/ProgramminCat/tomato-clock-ng",
-  "categories": { "firefox": ["productivity"] },
-  "license": "GPL-3.0",
 
   "icons": {
     "16": "assets/images/tomato-icon-16.png",
