@@ -71,7 +71,7 @@ export default class Stats {
     this.resetDateRange();
 
     this.importLegacyStatsButton = document.getElementById("import-legacy-stats-button");
-    // Add click events for BOTH buttons
+
     this.importStatsButton.addEventListener("click", () => {
       this.importStatsHiddenInput.dataset.format = "new";
       this.importStatsHiddenInput.click();
@@ -96,15 +96,21 @@ export default class Stats {
 
   handleExportStatsButtonClick() {
     this.timeline.getTimeline().then((timeline) => {
-      const filename = `${getFilenameDate()}_tomato-clock-stats.json`;
+      const exportObject = {
+        version: "6.0.3",
+        exportedAt: new Date().toISOString(),
+        data: timeline
+      };
+      const filename = `${getFilenameDate()}_tomato-clock-ng-stats.json`;
 
-      const dataStr =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(timeline));
-      const dlAnchorElem = document.getElementById("downloadAnchorElem");
+      const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const dlAnchorElem = document.getElementById("downloadAnchorElem") || document.createElement("a");
       dlAnchorElem.setAttribute("href", dataStr);
       dlAnchorElem.setAttribute("download", filename);
+      dlAnchorElem.style.display = "none";
+      document.body.appendChild(dlAnchorElem);
       dlAnchorElem.click();
+      document.body.removeChild(dlAnchorElem);
     });
   }
 
