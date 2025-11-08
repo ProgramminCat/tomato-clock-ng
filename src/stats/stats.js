@@ -96,19 +96,32 @@ export default class Stats {
 
   handleExportStatsButtonClick() {
     this.timeline.getTimeline().then((timeline) => {
-      const exportObject = {
-        specificationUrl: "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format",
-        version: "6.0.3",
-        exportedAt: new Date().toISOString(),
-        data: timeline
-      };
-      const filename = `${getFilenameDate()}_tomato-clock-ng-stats.json`;
+      let processedData = timeline || [];
+      let exportVersion = "6.0.3";
+      let specificationUrl = "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format";
 
-      if ("date" in timeline[0]) { // If this is true, then this means that this is a backwards-compatable legacy import that lacks the extra info that the new version needs
-        exportObject["version"] = "legacyImport";
-        exportObject["specificationUrl"] = "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#legacy-import-statistics-json-format";
+      // detect if legacy format and convert to new format
+      if (Array.isArray(timeline) && timeline.length > 0 && "date" in timeline[0]) {
+        processedData = timeline.map((item) => {
+          const startTime = new Date(item.date).toISOString();
+          const endTime = new Date(new Date(item.date).getTime() + item.timeout).toISOString();
+          return {
+            type: item.type,
+            startTime: startTime,
+            endTime: endTime,
+            duration: item.timeout
+          };
+        });
       }
 
+      const exportObject = {
+        specificationUrl: specificationUrl,
+        version: exportVersion,
+        exportedAt: new Date().toISOString(),
+        data: processedData
+      };
+
+      const filename = `${getFilenameDate()}_tomato-clock-ng-stats.json`;
       const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const dlAnchorElem = document.getElementById("downloadAnchorElem") || document.createElement("a");
       dlAnchorElem.setAttribute("href", dataStr);
