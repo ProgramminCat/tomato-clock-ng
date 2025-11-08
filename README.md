@@ -76,6 +76,7 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
 
 ```json
 {
+  "specificationUrl": "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format",
   "version": "6.0.3",
   "exportedAt": "2025-11-08T00:13:06.022Z",
   "data": [
