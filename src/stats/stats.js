@@ -62,10 +62,6 @@ export default class Stats {
       "click",
       this.handleExportStatsButtonClick
     );
-    this.importStatsButton.addEventListener(
-      "click",
-      this.handleImportStatsButtonClick
-    );
     this.importStatsHiddenInput.addEventListener(
       "change",
       this.handleImportStatsHiddenInputChange
@@ -73,6 +69,21 @@ export default class Stats {
 
     this.timeline = new Timeline();
     this.resetDateRange();
+
+    this.importLegacyStatsButton = document.getElementById("import-legacy-stats-button");
+    // Add click events for BOTH buttons
+    this.importStatsButton.addEventListener("click", () => {
+      this.importStatsHiddenInput.dataset.format = "new";
+      this.importStatsHiddenInput.click();
+    });
+    this.importLegacyStatsButton.addEventListener("click", () => {
+      this.importStatsHiddenInput.dataset.format = "legacy";
+      this.importStatsHiddenInput.click();
+    });
+    this.importStatsHiddenInput.addEventListener(
+      "change",
+      this.handleImportStatsHiddenInputChange.bind(this)
+    );
   }
 
   handleResetStatsButtonClick() {
@@ -103,18 +114,50 @@ export default class Stats {
 
   async handleImportStatsHiddenInputChange(e) {
     const [file] = e.target.files;
-    const timelineJson = await file.text();
+    if (!file) return;
 
-    let newTimeline;
+    const fileContent = await file.text();
+    let imported;
 
     try {
-      newTimeline = JSON.parse(timelineJson);
-    } catch (e) {
-      alert("Invalid JSON");
+      imported = JSON.parse(fileContent);
+    } catch (err) {
+      alert("Invalid JSON structure.");
+      e.target.value = "";
       return;
     }
 
-    await this.timeline.setTimeline(newTimeline);
+    let timelineArr;
+    if (Array.isArray(imported)) {
+      // Legacy
+      timelineArr = imported;
+    } else if (imported.version && Array.isArray(imported.data)) {
+      // New format
+      timelineArr = imported.data;
+    } else {
+      alert("Unrecognized JSON. Try exporting your stats first.");
+      e.target.value = "";
+      return;
+    }
+
+    // Validate entries
+    if (!timelineArr.every(entry => entry && entry.type && entry.date)) {
+      alert("The imported data does not appear to be valid Tomato Clock stats.");
+      e.target.value = "";
+      return;
+    }
+
+    // Save to browser.storage.local
+    if (typeof browser !== 'undefined' && browser.storage && browser.storage.local) {
+      await browser.storage.local.set({ timeline: timelineArr });
+    } else if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ timeline: timelineArr });
+    }
+
+    // Update timeline object
+    if (this.timeline) this.timeline.timeline = timelineArr;
+
+    alert("Import successful!");
     window.location.reload();
   }
 
