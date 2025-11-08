@@ -72,9 +72,10 @@ export default class Timeline {
   async getTimeline() {
     const timeline = await this._getRawTimeline();
 
-    return timeline.map((timelineAlarm) => {
-      timelineAlarm.date = new Date(timelineAlarm.date);
-      return timelineAlarm;
+    return timeline.map((item) => {
+      if (item.startTime) item.startTime = new Date(item.startTime);
+      if (item.endTime) item.endTime = new Date(item.endTime);
+      return item;
     });
   }
 
@@ -93,27 +94,34 @@ export default class Timeline {
     }
   }
 
-  // Inclusive date range
   async getFilteredTimeline(startDate, endDate) {
     const timeline = await this.getTimeline();
-    return timeline.filter((timelineAlarm) => {
-      return timelineAlarm.date >= startDate && timelineAlarm.date <= endDate;
+    return timeline.filter((entry) => {
+      const eventTime = entry.endTime
+        ? new Date(entry.endTime)
+        : (entry.date ? new Date(entry.date) : null);
+      return eventTime && eventTime >= startDate && eventTime <= endDate;
     });
   }
 
   async addAlarmToTimeline(type, totalTime) {
     const timeline = await this._getRawTimeline();
 
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() + totalTime);
+    const duration = totalTime; // in ms
+
     timeline.push({
-      timeout: totalTime,
       type,
-      date: new Date().toISOString(), // should be initialized to Date whenever interacted with
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      duration,
     });
 
     try {
       await this.storage.set({ [STORAGE_KEY.TIMELINE]: timeline });
     } catch (e) {
-      if (e.message.startsWith("QuotaExceededError")) {
+      if (e.message && e.message.startsWith("QuotaExceededError")) {
         await this.notifications.createStorageLimitNotification();
       }
     }

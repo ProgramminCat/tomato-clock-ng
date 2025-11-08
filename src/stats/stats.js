@@ -148,7 +148,7 @@ export default class Stats {
     }
 
     // Validate entries
-    if (!timelineArr.every(entry => entry && entry.type && entry.date)) {
+    if (!timelineArr.every(entry => entry && entry.type && (entry.date || entry.startTime || entry.endTime))) {
       alert("The imported data does not appear to be valid Tomato Clock stats.");
       e.target.value = "";
       return;
@@ -227,11 +227,17 @@ export default class Stats {
       switch (timelineAlarm.type) {
         case TIMER_TYPE.TOMATO:
           stats.tomatoes++;
-          this.addTomatoDateToChartData(
-            completedTomatoesChartData,
-            timelineAlarm.date,
-            dateUnit
-          );
+          const eventDate = timelineAlarm.endTime
+            ? new Date(timelineAlarm.endTime)
+            : (timelineAlarm.date ? new Date(timelineAlarm.date) : null);
+
+          if (eventDate) {
+            this.addTomatoDateToChartData(
+              completedTomatoesChartData,
+              eventDate,
+              dateUnit
+            );
+          }
           break;
         case TIMER_TYPE.SHORT_BREAK:
           stats.shortBreaks++;
