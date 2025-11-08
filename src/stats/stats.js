@@ -2,6 +2,8 @@ import $ from "jquery";
 import { Chart, registerables } from 'chart.js';
 import moment from "moment";
 import "daterangepicker";
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "daterangepicker/daterangepicker.css";
@@ -290,7 +292,45 @@ export default class Stats {
         },
       });
     }
+
+    renderStatsCalendar(filteredTimeline);
   }
+}
+
+function mapTomatoStatsToCalendarEvents(timelineArr) {
+  return timelineArr
+    .filter(entry => entry.type === TIMER_TYPE.TOMATO && (entry.endTime || entry.date))
+    .map(entry => {
+      const eventDate = entry.endTime
+        ? new Date(entry.endTime).toISOString().split('T')[0]
+        : new Date(entry.date).toISOString().split('T')[0];
+      const durationMin = (entry.duration || 0) / 60000;
+      return {
+        title: `🍅 ${durationMin.toFixed(0)} min`,
+        start: eventDate,
+        allDay: true,
+        backgroundColor: '#ff6347',
+      };
+    });
+}
+
+function renderStatsCalendar(timelineArr) {
+  const calendarEl = document.getElementById('stats-calendar');
+  if (!calendarEl) return;
+  calendarEl.innerHTML = '';
+  const calendar = new Calendar(calendarEl, {
+    plugins: [dayGridPlugin],
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth',
+    },
+    events: mapTomatoStatsToCalendarEvents(timelineArr),
+    height: 500,
+    eventDisplay: 'block'
+  });
+  calendar.render();
 }
 
 $(document).ready(() => {
