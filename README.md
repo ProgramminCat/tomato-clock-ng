@@ -105,7 +105,7 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
 But unfortunately, there is an exception, as there is a format in which the data was imported from a legacy format, the one that Tomato Clock uses, and therefore lacks the data needed. The excepted formatting of this special format is as follows:
 ```json
 {
-  "specificationUrl": "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format",
+  "specificationUrl": "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#legacy-import-statistics-json-format",
   "version": "legacyImport",
   "exportedAt": "2025-11-08T01:05:43.788Z",
   "data": [
