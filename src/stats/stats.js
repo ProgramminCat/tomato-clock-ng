@@ -97,6 +97,7 @@ export default class Stats {
   handleExportStatsButtonClick() {
     this.timeline.getTimeline().then((timeline) => {
       const exportObject = {
+        specificationUrl: "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format",
         version: "6.0.3",
         exportedAt: new Date().toISOString(),
         data: timeline
