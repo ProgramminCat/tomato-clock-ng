@@ -75,16 +75,21 @@ npm run build
 The expected formatting of Tomato Clock NG's .json files that store statistics is as follows
 
 ```json
-[
-  { "timeout": 1500000, "type": "tomato", "date": "2020-08-29T18:07:55.895Z" },
-  { "timeout": 300000, "type": "shortBreak", "date": "2022-04-13T04:13:37.406Z" },
-  { "timeout": 900000, "type": "longBreak", "date": "2022-04-13T04:13:40.030Z" },
-  { "timeout": 1500000, "type": "tomato", "date": "2022-04-13T04:13:45.182Z" }
-]
+{
+  "version": "6.0.3",
+  "exportedAt": "2025-11-08T00:13:06.022Z",
+  "data": [
+    {
+      "timeout": 60000,
+      "type": "tomato",
+      "date": "2025-11-08T00:13:01.501Z"
+    }
+  ]
+}
 ```
 
-- At the base, there is an array [] of objects {}
-- Each object {} is an instance of the clock timer.
+- At the base, there is metadata and an array [] of objects {}
+- Each object {} under "data" is an instance of the clock timer.
 - Within each object:
   - "timeout": is the time in milliseconds of the timer
   - "type": is one of "tomato", "shortBreak", or "longBreak"
