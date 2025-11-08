@@ -33,9 +33,11 @@ export default class Stats {
     this.resetStatsButton = document.getElementById("reset-stats-button");
     this.exportStatsButton = document.getElementById("export-stats-button");
     this.importStatsButton = document.getElementById("import-stats-button");
-    this.importStatsHiddenInput = document.getElementById(
-      "import-stats-hidden-input"
-    );
+    this.importStatsHiddenInput = document.getElementById("import-stats-hidden-input");
+    this.totalTomatoMinutes = document.getElementById("total-tomato-minutes");
+    this.averageTomatoMinutesDay = document.getElementById("average-tomato-minutes-day");
+    this.averageTomatoMinutesWeek = document.getElementById("average-tomato-minutes-week");
+    this.averageTomatoMinutesMonth = document.getElementById("average-tomato-minutes-month");
 
     this.ctx = document
       .getElementById("completed-tomato-dates-chart")
@@ -206,18 +208,16 @@ export default class Stats {
     this.tomatoesCount.textContent = stats.tomatoes;
     this.shortBreaksCount.textContent = stats.shortBreaks;
     this.longBreaksCount.textContent = stats.longBreaks;
+
+    this.totalTomatoMinutes.textContent = stats.totalTomatoMinutes.toFixed(1);
+    this.averageTomatoMinutesDay.textContent = stats.averageTomatoMinutesDay.toFixed(1);
+    this.averageTomatoMinutesWeek.textContent = stats.averageTomatoMinutesWeek.toFixed(1);
+    this.averageTomatoMinutesMonth.textContent = stats.averageTomatoMinutesMonth.toFixed(1);
   }
 
   async changeStatDates(startDate, endDate, dateUnit) {
-    const filteredTimeline = await this.timeline.getFilteredTimeline(
-      startDate,
-      endDate
-    );
-    const dateRangeStrings = getDateRangeStringArray(
-      startDate,
-      endDate,
-      dateUnit
-    );
+    const filteredTimeline = await this.timeline.getFilteredTimeline(startDate, endDate);
+    const dateRangeStrings = getDateRangeStringArray(startDate, endDate, dateUnit);
 
     const completedTomatoesChartData = {
       labels: dateRangeStrings,
@@ -238,39 +238,44 @@ export default class Stats {
       tomatoes: 0,
       shortBreaks: 0,
       longBreaks: 0,
+      totalTomatoMinutes: 0,
+      averageTomatoMinutesDay: 0,
+      averageTomatoMinutesWeek: 0,
+      averageTomatoMinutesMonth: 0,
     };
 
-    // Go through timeline
-    for (let timelineAlarm of filteredTimeline) {
-      switch (timelineAlarm.type) {
-        case TIMER_TYPE.TOMATO:
-          stats.tomatoes++;
-          const eventDate = timelineAlarm.endTime
-            ? new Date(timelineAlarm.endTime)
-            : (timelineAlarm.date ? new Date(timelineAlarm.date) : null);
 
-          if (eventDate) {
-            this.addTomatoDateToChartData(
-              completedTomatoesChartData,
-              eventDate,
-              dateUnit
-            );
-          }
-          break;
-        case TIMER_TYPE.SHORT_BREAK:
-          stats.shortBreaks++;
-          break;
-        case TIMER_TYPE.LONG_BREAK:
-          stats.longBreaks++;
-          break;
-        default:
-          break;
+    for (let timelineAlarm of filteredTimeline) {
+      if (timelineAlarm.type === TIMER_TYPE.TOMATO) {
+        stats.tomatoes++;
+        const durationMin = (timelineAlarm.duration || 0) / 60000;
+        stats.totalTomatoMinutes += durationMin;
+        const eventDate = timelineAlarm.endTime
+          ? new Date(timelineAlarm.endTime)
+          : timelineAlarm.date ? new Date(timelineAlarm.date) : null;
+        if (eventDate) {
+          this.addTomatoDateToChartData(completedTomatoesChartData, eventDate, dateUnit);
+        }
+      } else if (timelineAlarm.type === TIMER_TYPE.SHORT_BREAK) {
+        stats.shortBreaks++;
+      } else if (timelineAlarm.type === TIMER_TYPE.LONG_BREAK) {
+        stats.longBreaks++;
       }
+    }
+
+    // calc averages
+    const totalDays = moment(endDate).diff(moment(startDate), "days") + 1;
+    const totalWeeks = totalDays / 7;
+    const totalMonths = totalDays / 30;
+
+    if (totalDays > 0) {
+      stats.averageTomatoMinutesDay = stats.totalTomatoMinutes / totalDays;
+      stats.averageTomatoMinutesWeek = stats.totalTomatoMinutes / totalWeeks;
+      stats.averageTomatoMinutesMonth = stats.totalTomatoMinutes / totalMonths;
     }
 
     this.setStatsText(stats);
 
-    // Setup 'Completed Tomatoes' Line Chart
     if (this.completedTomatoesChart) {
       this.completedTomatoesChart.config.data = completedTomatoesChartData;
       this.completedTomatoesChart.update();
@@ -279,23 +284,9 @@ export default class Stats {
         type: "line",
         data: completedTomatoesChartData,
         options: {
-          tooltips: {
-            intersect: false,
-            mode: "nearest",
-          },
-          scales: {
-            y: {
-              type: 'linear',
-              ticks: {
-                maxTicksLimit: 5,
-                suggestedMax: 5,
-                beginAtZero: true
-              }
-            }
-          },
-          legend: {
-            position: "bottom",
-          },
+          tooltips: { intersect: false, mode: "nearest" },
+          scales: { y: { beginAtZero: true, suggestedMax: 5 } },
+          legend: { position: "bottom" },
         },
       });
     }
