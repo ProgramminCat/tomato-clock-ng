@@ -101,7 +101,7 @@ export default class Stats {
   handleExportStatsButtonClick() {
     this.timeline.getTimeline().then((timeline) => {
       let processedData = timeline || [];
-      let exportVersion = "6.0.3"; // TODO: make version var here not hardcoded
+      let exportVersion = "6.0.5"; // TODO: make version var here not hardcoded
       let specificationUrl = "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format";
 
       // detect if legacy format and convert to new format
