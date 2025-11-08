@@ -294,6 +294,56 @@ export default class Stats {
     }
 
     renderStatsCalendar(filteredTimeline);
+
+
+
+    // streak stuff below
+    
+    const fullTimeline = this.timeline.timeline || await this.timeline.getTimeline();
+    const tomatoMinutesPerDay = {};
+    fullTimeline.forEach((entry) => {
+      if (entry.type === TIMER_TYPE.TOMATO) {
+        const dateObj = entry.endTime
+          ? new Date(entry.endTime)
+          : entry.date ? new Date(entry.date) : null;
+        if (dateObj) {
+          const dateStr = dateObj.toISOString().split('T')[0];
+          tomatoMinutesPerDay[dateStr] = (tomatoMinutesPerDay[dateStr] || 0) + (entry.duration || 0) / 60000;
+        }
+      }
+    });
+
+    let longestStreak = 0;
+    let currentStreak = 0;
+    let tempStreak = 0;
+
+    const momentList = [];
+    for (
+      let m = moment(startDate).clone();
+      m.isSameOrBefore(moment(endDate), "day");
+      m.add(1, "days")
+    ) {
+      momentList.push(m.clone());
+    }
+
+    momentList.forEach((m, idx) => {
+      const dateStr = m.format('YYYY-MM-DD');
+      const hasTomato = (tomatoMinutesPerDay[dateStr] || 0) >= 1; // TODO: make minimum minutes per day configurable
+      if (hasTomato) {
+        tempStreak++;
+        if (tempStreak > longestStreak) longestStreak = tempStreak;
+        if (idx === momentList.length - 1) currentStreak = tempStreak;
+      } else {
+        tempStreak = 0;
+        if (idx === momentList.length - 1) currentStreak = 0;
+      }
+    });
+
+    stats.longestStreak = longestStreak;
+    stats.currentStreak = currentStreak;
+
+    document.getElementById("longest-streak-count").textContent = stats.longestStreak;
+    document.getElementById("current-streak-count").textContent = stats.currentStreak;
   }
 }
 
