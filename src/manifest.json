@@ -68,7 +68,10 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "@tomatoclockng"
+      "id": "@tomatoclockng",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   }
 }
