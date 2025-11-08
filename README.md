@@ -45,14 +45,7 @@ To temporarily load the extension in a normal Firefox instance:
 
 1. Go to `about:debugging`
 2. Click `Load Temporary Add-on`
-3. Load the `src` folder
-
-### Chromium
-
-1. Go to `chrome://extensions/`
-2. Enable developer mode
-3. Click `Load unpacked extension...`
-4. Load the `/dist` folder
+3. Load the `src` folder, OR compile by running `npm run build` then load the `dist` folder
 
 ### Updating the version number
 
