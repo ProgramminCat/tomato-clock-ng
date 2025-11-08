@@ -104,6 +104,11 @@ export default class Stats {
       };
       const filename = `${getFilenameDate()}_tomato-clock-ng-stats.json`;
 
+      if ("date" in timeline[0]) { // If this is true, then this means that this is a backwards-compatable legacy import that lacks the extra info that the new version needs
+        exportObject["version"] = "legacyImport";
+        exportObject["specificationUrl"] = "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#legacy-import-statistics-json-format";
+      }
+
       const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const dlAnchorElem = document.getElementById("downloadAnchorElem") || document.createElement("a");
       dlAnchorElem.setAttribute("href", dataStr);
