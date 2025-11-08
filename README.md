@@ -81,9 +81,10 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
   "exportedAt": "2025-11-08T00:13:06.022Z",
   "data": [
     {
-      "timeout": 60000,
       "type": "tomato",
-      "date": "2025-11-08T00:13:01.501Z"
+      "startTime": "2025-11-08T00:52:29.117Z",
+      "endTime": "2025-11-08T00:53:29.117Z",
+      "duration": 60000
     }
   ]
 }
@@ -92,6 +93,27 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
 - At the base, there is metadata and an array [] of objects {}
 - Each object {} under "data" is an instance of the clock timer.
 - Within each object:
-  - "timeout": is the time in milliseconds of the timer
+  - "duration": is the time in milliseconds of the timer
   - "type": is one of "tomato", "shortBreak", or "longBreak"
-  - "date": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+  - "startTime": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) of the time the timer started
+  - "endTime": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) of the time the timer ended
+
+<hr>
+
+## Legacy Import Statistics JSON Format
+
+But unfortunately, there is an exception, as there is a format in which the data was imported from a legacy format, the one that Tomato Clock uses, and therefore lacks the data needed. The excepted formatting of this special format is as follows:
+```json
+{
+  "specificationUrl": "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#legacy-import-statistics-json-format",
+  "version": "legacyImport",
+  "exportedAt": "2025-11-08T01:05:43.788Z",
+  "data": [
+    {
+      "timeout": 1500000,
+      "type": "tomato",
+      "date": "2025-11-07T18:07:55.895Z"
+    }
+  ]
+}
+```
