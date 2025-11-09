@@ -10,12 +10,15 @@ import {
   getTimerTypeMilliseconds,
 } from "../utils/utils";
 import Settings from "../utils/settings";
+import Tasks from "../utils/tasks";
 
 export default class Panel {
   constructor() {
     this.settings = new Settings();
+    this.tasks = new Tasks();
     this.currentTimeText = document.getElementById("current-time-text");
     this.presetSelect = document.getElementById("preset-select");
+    this.taskSelect = document.getElementById("task-select");
     this.timer = {};
 
     browser.runtime
@@ -30,6 +33,7 @@ export default class Panel {
 
     this.setEventListeners();
     this.setPresetFromSettings();
+    this.loadTasks();
   }
 
   setEventListeners() {
@@ -39,8 +43,9 @@ export default class Panel {
       });
     }
     document.getElementById("tomato-button").addEventListener("click", () => {
+      const selectedTaskId = this.taskSelect.value || null;
       this.setTimer(TIMER_TYPE.TOMATO);
-      this.setBackgroundTimer(TIMER_TYPE.TOMATO);
+      this.setBackgroundTimer(TIMER_TYPE.TOMATO, selectedTaskId);
     });
 
     document
@@ -62,6 +67,10 @@ export default class Panel {
       this.resetBackgroundTimer();
     });
 
+    document.getElementById("tasks-link").addEventListener("click", () => {
+      browser.tabs.create({ url: "/tasks/tasks.html" });
+    });
+
     document.getElementById("stats-link").addEventListener("click", () => {
       browser.tabs.create({ url: "/stats/stats.html" });
     });
@@ -71,11 +80,29 @@ export default class Panel {
     });
   }
 
+  async loadTasks() {
+    if (!this.taskSelect) return;
+
+    const tasks = await this.tasks.getActiveTasks();
+
+    // Clear existing options except the first one
+    this.taskSelect.innerHTML = '<option value="">No Task Selected</option>';
+
+    // Add task options
+    tasks.forEach((task) => {
+      const option = document.createElement("option");
+      option.value = task.id;
+      option.textContent = task.name;
+      this.taskSelect.appendChild(option);
+    });
+  }
+
   setPresetFromSettings() {
     if (!this.presetSelect) return;
 
     this.settings.getSettings().then((settings) => {
-      const { minutesInTomato, minutesInShortBreak, minutesInLongBreak } = settings;
+      const { minutesInTomato, minutesInShortBreak, minutesInLongBreak } =
+        settings;
 
       const triplet = `${minutesInTomato}-${minutesInShortBreak}-${minutesInLongBreak}`;
 
@@ -169,11 +196,12 @@ export default class Panel {
     });
   }
 
-  setBackgroundTimer(type) {
+  setBackgroundTimer(type, taskId = null) {
     browser.runtime.sendMessage({
       action: RUNTIME_ACTION.SET_TIMER,
       data: {
         type,
+        taskId,
       },
     });
   }

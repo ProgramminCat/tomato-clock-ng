@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tasks - Tomato Clock</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="/assets/images/tomato-favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="mt-3">Task Management - Tomato Clock</h1>
+
+      <hr />
+
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <h3>Add New Task</h3>
+          <form id="add-task-form">
+            <div class="form-group">
+              <label for="task-name-input">Task Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="task-name-input"
+                placeholder="Enter task name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="task-description-input">Description (optional)</label>
+              <textarea
+                class="form-control"
+                id="task-description-input"
+                rows="2"
+                placeholder="Enter task description"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Task</button>
+          </form>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-md-12">
+          <ul class="nav nav-tabs" id="task-tabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="active-tasks-tab"
+                data-bs-toggle="tab"
+                href="#active-tasks"
+                role="tab"
+              >
+                Active Tasks
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="completed-tasks-tab"
+                data-bs-toggle="tab"
+                href="#completed-tasks"
+                role="tab"
+              >
+                Completed Tasks
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="task-stats-tab"
+                data-bs-toggle="tab"
+                href="#task-stats"
+                role="tab"
+              >
+                Task Statistics
+              </a>
+            </li>
+          </ul>
+
+          <div class="tab-content mt-3" id="task-tabs-content">
+            <!-- Active Tasks Tab -->
+            <div
+              class="tab-pane fade show active"
+              id="active-tasks"
+              role="tabpanel"
+            >
+              <h4>Active Tasks</h4>
+              <div id="active-tasks-list" class="task-list">
+                <!-- Active tasks will be rendered here -->
+              </div>
+            </div>
+
+            <!-- Completed Tasks Tab -->
+            <div class="tab-pane fade" id="completed-tasks" role="tabpanel">
+              <h4>Completed Tasks</h4>
+              <div id="completed-tasks-list" class="task-list">
+                <!-- Completed tasks will be rendered here -->
+              </div>
+            </div>
+
+            <!-- Task Statistics Tab -->
+            <div class="tab-pane fade" id="task-stats" role="tabpanel">
+              <h4>Task Statistics</h4>
+              <div id="task-stats-content">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Task Name</th>
+                      <th>Status</th>
+                      <th>Tomatoes</th>
+                      <th>Total Minutes</th>
+                      <th>Created</th>
+                    </tr>
+                  </thead>
+                  <tbody id="task-stats-table-body">
+                    <!-- Task stats will be rendered here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="mb-4">
+        <a href="/panel/panel.html" class="btn btn-secondary">Back to Timer</a>
+        <a href="/stats/stats.html" class="btn btn-info">View Stats</a>
+      </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div
+      class="modal fade"
+      id="edit-task-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Task</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="edit-task-form">
+              <input type="hidden" id="edit-task-id" />
+              <div class="form-group">
+                <label for="edit-task-name">Task Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="edit-task-name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="edit-task-description">Description</label>
+                <textarea
+                  class="form-control"
+                  id="edit-task-description"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="save-task-edit">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

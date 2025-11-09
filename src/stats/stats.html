@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -12,7 +12,10 @@
       href="/assets/images/tomato-favicon.ico"
     />
 
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
@@ -89,19 +92,45 @@
         </div>
       </div>
 
-      <hr>
-      <div style="width: 40%;">
+      <hr />
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="mt-4">Stats by Task</h2>
+          <div id="task-stats-section">
+            <p class="text-muted">
+              View tomato completion statistics grouped by task.
+            </p>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Task Name</th>
+                  <th>Tomatoes</th>
+                  <th>Total Minutes</th>
+                  <th>% of Total</th>
+                </tr>
+              </thead>
+              <tbody id="task-stats-body">
+                <!-- Task stats will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+      <div style="width: 40%">
         <h2 class="mt-4">Calendar</h2>
         <div id="stats-calendar"></div>
       </div>
-      <hr>
+      <hr />
 
       <hr />
 
       <button class="btn btn-primary" id="export-stats-button">
         Export Stats as JSON
       </button>
-      <a id="downloadAnchorElem" style="display: none;"></a>
+      <a id="downloadAnchorElem" style="display: none"></a>
 
       <button class="btn btn-secondary" id="import-stats-button">
         Import Stats from JSON

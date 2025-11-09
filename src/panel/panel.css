@@ -5,3 +5,20 @@
 .info-buttons {
   margin: 10px 0px 10px 0px;
 }
+
+#task-select {
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+#task-select option {
+  padding: 4px;
+}
+
+#task-select:focus {
+  border-color: #dc3545;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -13,6 +13,17 @@
         <h3 class="my-3">
           <span id="current-time-text">00:00</span>
         </h3>
+        <div style="margin-bottom: 12px">
+          <label
+            for="task-select"
+            style="font-size: 12px; margin-bottom: 4px; display: block"
+          >
+            Current Task (optional):
+          </label>
+          <select id="task-select" class="form-control" style="width: 100%">
+            <option value="">No Task Selected</option>
+          </select>
+        </div>
         <button
           type="button"
           class="btn btn-block btn-danger"
@@ -21,7 +32,7 @@
         >
           Tomato
         </button>
-        <br>
+        <br />
         <button
           type="button"
           class="btn btn-block btn-secondary"
@@ -29,7 +40,7 @@
         >
           Short Break
         </button>
-        <br>
+        <br />
         <button
           type="button"
           class="btn btn-block btn-secondary"
@@ -37,7 +48,7 @@
         >
           Long Break
         </button>
-        <br>
+        <br />
         <button
           type="button"
           class="btn btn-block btn-warning"
@@ -45,8 +56,11 @@
         >
           Reset
         </button>
-        <br>
+        <br />
         <div class="info-buttons">
+          <button type="button" class="btn btn-link" id="tasks-link">
+            Tasks
+          </button>
           <button type="button" class="btn btn-link" id="stats-link">
             Stats
           </button>
@@ -54,9 +68,13 @@
             Options
           </button>
         </div>
-        <div style="margin-top:12px; text-align:left;">
-          <label for="preset-select" style="font-size:12px;">Preset:</label>
-          <select id="preset-select" class="form-control" style="width:100%; margin-top:6px;">
+        <div style="margin-top: 12px; text-align: left">
+          <label for="preset-select" style="font-size: 12px">Preset:</label>
+          <select
+            id="preset-select"
+            class="form-control"
+            style="width: 100%; margin-top: 6px"
+          >
             <option value="default">Default</option>
             <option value="25-5-15">25 / 5 / 15</option>
             <option value="45-15-30">45 / 15 / 30</option>

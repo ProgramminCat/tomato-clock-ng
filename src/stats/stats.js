@@ -1,15 +1,16 @@
 import $ from "jquery";
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables } from "chart.js";
 import moment from "moment";
 import "daterangepicker";
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
+import { Calendar } from "@fullcalendar/core";
+import dayGridPlugin from "@fullcalendar/daygrid";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "daterangepicker/daterangepicker.css";
 import "./stats.css";
 
 import Timeline from "../utils/timeline";
+import Tasks from "../utils/tasks";
 import {
   getDateLabel,
   getDateRangeStringArray,
@@ -35,46 +36,54 @@ export default class Stats {
     this.resetStatsButton = document.getElementById("reset-stats-button");
     this.exportStatsButton = document.getElementById("export-stats-button");
     this.importStatsButton = document.getElementById("import-stats-button");
-    this.importStatsHiddenInput = document.getElementById("import-stats-hidden-input");
+    this.importStatsHiddenInput = document.getElementById(
+      "import-stats-hidden-input",
+    );
     this.totalTomatoMinutes = document.getElementById("total-tomato-minutes");
-    this.averageTomatoMinutesDay = document.getElementById("average-tomato-minutes-day");
-    this.averageTomatoMinutesWeek = document.getElementById("average-tomato-minutes-week");
-    this.averageTomatoMinutesMonth = document.getElementById("average-tomato-minutes-month");
+    this.averageTomatoMinutesDay = document.getElementById(
+      "average-tomato-minutes-day",
+    );
+    this.averageTomatoMinutesWeek = document.getElementById(
+      "average-tomato-minutes-week",
+    );
+    this.averageTomatoMinutesMonth = document.getElementById(
+      "average-tomato-minutes-month",
+    );
+    this.taskStatsBody = document.getElementById("task-stats-body");
 
     this.ctx = document
       .getElementById("completed-tomato-dates-chart")
       .getContext("2d");
     this.completedTomatoesChart = null;
 
-    this.handleResetStatsButtonClick = this.handleResetStatsButtonClick.bind(
-      this
-    );
-    this.handleExportStatsButtonClick = this.handleExportStatsButtonClick.bind(
-      this
-    );
-    this.handleImportStatsButtonClick = this.handleImportStatsButtonClick.bind(
-      this
-    );
-    this.handleImportStatsHiddenInputChange = this.handleImportStatsHiddenInputChange.bind(
-      this
-    );
+    this.handleResetStatsButtonClick =
+      this.handleResetStatsButtonClick.bind(this);
+    this.handleExportStatsButtonClick =
+      this.handleExportStatsButtonClick.bind(this);
+    this.handleImportStatsButtonClick =
+      this.handleImportStatsButtonClick.bind(this);
+    this.handleImportStatsHiddenInputChange =
+      this.handleImportStatsHiddenInputChange.bind(this);
     this.resetStatsButton.addEventListener(
       "click",
-      this.handleResetStatsButtonClick
+      this.handleResetStatsButtonClick,
     );
     this.exportStatsButton.addEventListener(
       "click",
-      this.handleExportStatsButtonClick
+      this.handleExportStatsButtonClick,
     );
     this.importStatsHiddenInput.addEventListener(
       "change",
-      this.handleImportStatsHiddenInputChange
+      this.handleImportStatsHiddenInputChange,
     );
 
     this.timeline = new Timeline();
+    this.tasks = new Tasks();
     this.resetDateRange();
 
-    this.importLegacyStatsButton = document.getElementById("import-legacy-stats-button");
+    this.importLegacyStatsButton = document.getElementById(
+      "import-legacy-stats-button",
+    );
 
     this.importStatsButton.addEventListener("click", () => {
       this.importStatsHiddenInput.dataset.format = "new";
@@ -86,7 +95,7 @@ export default class Stats {
     });
     this.importStatsHiddenInput.addEventListener(
       "change",
-      this.handleImportStatsHiddenInputChange.bind(this)
+      this.handleImportStatsHiddenInputChange.bind(this),
     );
   }
 
@@ -102,18 +111,25 @@ export default class Stats {
     this.timeline.getTimeline().then((timeline) => {
       let processedData = timeline || [];
       let exportVersion = browser.runtime.getManifest().version;
-      let specificationUrl = "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format";
+      let specificationUrl =
+        "https://github.com/ProgramminCat/tomato-clock-ng/?tab=readme-ov-file#statistics-json-format";
 
       // detect if legacy format and convert to new format
-      if (Array.isArray(timeline) && timeline.length > 0 && "date" in timeline[0]) {
+      if (
+        Array.isArray(timeline) &&
+        timeline.length > 0 &&
+        "date" in timeline[0]
+      ) {
         processedData = timeline.map((item) => {
           const startTime = new Date(item.date).toISOString();
-          const endTime = new Date(new Date(item.date).getTime() + item.timeout).toISOString();
+          const endTime = new Date(
+            new Date(item.date).getTime() + item.timeout,
+          ).toISOString();
           return {
             type: item.type,
             startTime: startTime,
             endTime: endTime,
-            duration: item.timeout
+            duration: item.timeout,
           };
         });
       }
@@ -122,12 +138,16 @@ export default class Stats {
         specificationUrl: specificationUrl,
         version: exportVersion,
         exportedAt: new Date().toISOString(),
-        data: processedData
+        data: processedData,
       };
 
       const filename = `${getFilenameDate()}_tomato-clock-ng-stats.json`;
-      const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
-      const dlAnchorElem = document.getElementById("downloadAnchorElem") || document.createElement("a");
+      const dataStr =
+        "data:application/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const dlAnchorElem =
+        document.getElementById("downloadAnchorElem") ||
+        document.createElement("a");
       dlAnchorElem.setAttribute("href", dataStr);
       dlAnchorElem.setAttribute("download", filename);
       dlAnchorElem.style.display = "none";
@@ -170,16 +190,33 @@ export default class Stats {
     }
 
     // Validate entries
-    if (!timelineArr.every(entry => entry && entry.type && (entry.date || entry.startTime || entry.endTime))) {
-      alert("The imported data does not appear to be valid Tomato Clock stats.");
+    if (
+      !timelineArr.every(
+        (entry) =>
+          entry &&
+          entry.type &&
+          (entry.date || entry.startTime || entry.endTime),
+      )
+    ) {
+      alert(
+        "The imported data does not appear to be valid Tomato Clock stats.",
+      );
       e.target.value = "";
       return;
     }
 
     // Save to browser.storage.local
-    if (typeof browser !== 'undefined' && browser.storage && browser.storage.local) {
+    if (
+      typeof browser !== "undefined" &&
+      browser.storage &&
+      browser.storage.local
+    ) {
       await browser.storage.local.set({ timeline: timelineArr });
-    } else if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    } else if (
+      typeof chrome !== "undefined" &&
+      chrome.storage &&
+      chrome.storage.local
+    ) {
       chrome.storage.local.set({ timeline: timelineArr });
     }
 
@@ -212,14 +249,24 @@ export default class Stats {
     this.longBreaksCount.textContent = stats.longBreaks;
 
     this.totalTomatoMinutes.textContent = stats.totalTomatoMinutes.toFixed(1);
-    this.averageTomatoMinutesDay.textContent = stats.averageTomatoMinutesDay.toFixed(1);
-    this.averageTomatoMinutesWeek.textContent = stats.averageTomatoMinutesWeek.toFixed(1);
-    this.averageTomatoMinutesMonth.textContent = stats.averageTomatoMinutesMonth.toFixed(1);
+    this.averageTomatoMinutesDay.textContent =
+      stats.averageTomatoMinutesDay.toFixed(1);
+    this.averageTomatoMinutesWeek.textContent =
+      stats.averageTomatoMinutesWeek.toFixed(1);
+    this.averageTomatoMinutesMonth.textContent =
+      stats.averageTomatoMinutesMonth.toFixed(1);
   }
 
   async changeStatDates(startDate, endDate, dateUnit) {
-    const filteredTimeline = await this.timeline.getFilteredTimeline(startDate, endDate);
-    const dateRangeStrings = getDateRangeStringArray(startDate, endDate, dateUnit);
+    const filteredTimeline = await this.timeline.getFilteredTimeline(
+      startDate,
+      endDate,
+    );
+    const dateRangeStrings = getDateRangeStringArray(
+      startDate,
+      endDate,
+      dateUnit,
+    );
 
     const completedTomatoesChartData = {
       labels: dateRangeStrings,
@@ -246,7 +293,6 @@ export default class Stats {
       averageTomatoMinutesMonth: 0,
     };
 
-
     for (let timelineAlarm of filteredTimeline) {
       if (timelineAlarm.type === TIMER_TYPE.TOMATO) {
         stats.tomatoes++;
@@ -254,9 +300,15 @@ export default class Stats {
         stats.totalTomatoMinutes += durationMin;
         const eventDate = timelineAlarm.endTime
           ? new Date(timelineAlarm.endTime)
-          : timelineAlarm.date ? new Date(timelineAlarm.date) : null;
+          : timelineAlarm.date
+            ? new Date(timelineAlarm.date)
+            : null;
         if (eventDate) {
-          this.addTomatoDateToChartData(completedTomatoesChartData, eventDate, dateUnit);
+          this.addTomatoDateToChartData(
+            completedTomatoesChartData,
+            eventDate,
+            dateUnit,
+          );
         }
       } else if (timelineAlarm.type === TIMER_TYPE.SHORT_BREAK) {
         stats.shortBreaks++;
@@ -295,20 +347,22 @@ export default class Stats {
 
     renderStatsCalendar(filteredTimeline);
 
-
-
     // streak stuff below
-    
-    const fullTimeline = this.timeline.timeline || await this.timeline.getTimeline();
+
+    const fullTimeline =
+      this.timeline.timeline || (await this.timeline.getTimeline());
     const tomatoMinutesPerDay = {};
     fullTimeline.forEach((entry) => {
       if (entry.type === TIMER_TYPE.TOMATO) {
         const dateObj = entry.endTime
           ? new Date(entry.endTime)
-          : entry.date ? new Date(entry.date) : null;
+          : entry.date
+            ? new Date(entry.date)
+            : null;
         if (dateObj) {
-          const dateStr = dateObj.toISOString().split('T')[0];
-          tomatoMinutesPerDay[dateStr] = (tomatoMinutesPerDay[dateStr] || 0) + (entry.duration || 0) / 60000;
+          const dateStr = dateObj.toISOString().split("T")[0];
+          tomatoMinutesPerDay[dateStr] =
+            (tomatoMinutesPerDay[dateStr] || 0) + (entry.duration || 0) / 60000;
         }
       }
     });
@@ -327,7 +381,7 @@ export default class Stats {
     }
 
     momentList.forEach((m, idx) => {
-      const dateStr = m.format('YYYY-MM-DD');
+      const dateStr = m.format("YYYY-MM-DD");
       const hasTomato = (tomatoMinutesPerDay[dateStr] || 0) >= 1; // TODO: make minimum minutes per day configurable
       if (hasTomato) {
         tempStreak++;
@@ -342,43 +396,148 @@ export default class Stats {
     stats.longestStreak = longestStreak;
     stats.currentStreak = currentStreak;
 
-    document.getElementById("longest-streak-count").textContent = stats.longestStreak;
-    document.getElementById("current-streak-count").textContent = stats.currentStreak;
+    document.getElementById("longest-streak-count").textContent =
+      stats.longestStreak;
+    document.getElementById("current-streak-count").textContent =
+      stats.currentStreak;
+
+    // Load task-based statistics
+    this.loadTaskStats(startDate, endDate);
+  }
+
+  async loadTaskStats(startDate, endDate) {
+    const filteredTimeline = await this.timeline.getFilteredTimeline(
+      startDate,
+      endDate,
+    );
+    const allTasks = await this.tasks.getTasks();
+
+    // Create a map of task IDs to task objects
+    const taskMap = {};
+    allTasks.forEach((task) => {
+      taskMap[task.id] = {
+        name: task.name,
+        tomatoCount: 0,
+        totalMinutes: 0,
+      };
+    });
+
+    // Add a category for "No Task" entries
+    const noTaskStats = {
+      name: "No Task",
+      tomatoCount: 0,
+      totalMinutes: 0,
+    };
+
+    let totalTomatoesInRange = 0;
+    let totalMinutesInRange = 0;
+
+    // Count tomatoes per task
+    filteredTimeline.forEach((entry) => {
+      if (entry.type === TIMER_TYPE.TOMATO) {
+        const durationMin = (entry.duration || 0) / 60000;
+        totalTomatoesInRange++;
+        totalMinutesInRange += durationMin;
+
+        if (entry.taskId && taskMap[entry.taskId]) {
+          taskMap[entry.taskId].tomatoCount++;
+          taskMap[entry.taskId].totalMinutes += durationMin;
+        } else {
+          noTaskStats.tomatoCount++;
+          noTaskStats.totalMinutes += durationMin;
+        }
+      }
+    });
+
+    // Convert to array and sort by tomato count
+    const taskStats = Object.values(taskMap).filter(
+      (task) => task.tomatoCount > 0,
+    );
+    if (noTaskStats.tomatoCount > 0) {
+      taskStats.push(noTaskStats);
+    }
+    taskStats.sort((a, b) => b.tomatoCount - a.tomatoCount);
+
+    // Render task stats table
+    this.renderTaskStats(taskStats, totalMinutesInRange);
+  }
+
+  renderTaskStats(taskStats, totalMinutesInRange) {
+    if (!this.taskStatsBody) return;
+
+    this.taskStatsBody.innerHTML = "";
+
+    if (taskStats.length === 0) {
+      this.taskStatsBody.innerHTML = `
+        <tr>
+          <td colspan="4" class="text-center" style="padding: 30px; color: #6c757d;">
+            No task data available for the selected date range.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    taskStats.forEach((task) => {
+      const row = document.createElement("tr");
+      const percentage =
+        totalMinutesInRange > 0
+          ? ((task.totalMinutes / totalMinutesInRange) * 100).toFixed(1)
+          : 0;
+
+      row.innerHTML = `
+        <td>${this.escapeHtml(task.name)}</td>
+        <td><span class="badge badge-danger">${task.tomatoCount}</span></td>
+        <td>${task.totalMinutes.toFixed(1)}</td>
+        <td>${percentage}%</td>
+      `;
+
+      this.taskStatsBody.appendChild(row);
+    });
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
   }
 }
 
 function mapTomatoStatsToCalendarEvents(timelineArr) {
   return timelineArr
-    .filter(entry => entry.type === TIMER_TYPE.TOMATO && (entry.endTime || entry.date))
-    .map(entry => {
+    .filter(
+      (entry) =>
+        entry.type === TIMER_TYPE.TOMATO && (entry.endTime || entry.date),
+    )
+    .map((entry) => {
       const eventDate = entry.endTime
-        ? new Date(entry.endTime).toISOString().split('T')[0]
-        : new Date(entry.date).toISOString().split('T')[0];
+        ? new Date(entry.endTime).toISOString().split("T")[0]
+        : new Date(entry.date).toISOString().split("T")[0];
       const durationMin = (entry.duration || 0) / 60000;
       return {
         title: `🍅 ${durationMin.toFixed(0)} min`,
         start: eventDate,
         allDay: true,
-        backgroundColor: '#ff6347',
+        backgroundColor: "#ff6347",
       };
     });
 }
 
 function renderStatsCalendar(timelineArr) {
-  const calendarEl = document.getElementById('stats-calendar');
+  const calendarEl = document.getElementById("stats-calendar");
   if (!calendarEl) return;
-  calendarEl.innerHTML = '';
+  calendarEl.innerHTML = "";
   const calendar = new Calendar(calendarEl, {
     plugins: [dayGridPlugin],
-    initialView: 'dayGridMonth',
+    initialView: "dayGridMonth",
     headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth',
+      left: "prev,next today",
+      center: "title",
+      right: "dayGridMonth",
     },
     events: mapTomatoStatsToCalendarEvents(timelineArr),
     height: 500,
-    eventDisplay: 'block'
+    eventDisplay: "block",
   });
   calendar.render();
 }
@@ -430,6 +589,6 @@ $(document).ready(() => {
       const dateUnit = isRangeYear ? DATE_UNIT.MONTH : DATE_UNIT.DAY;
 
       stats.changeStatDates(startDate, endDate, dateUnit);
-    }
+    },
   );
 });

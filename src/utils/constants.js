@@ -3,6 +3,7 @@ export const NOTIFICATION_ID = "tomatoClockNotification";
 export const STORAGE_KEY = {
   TIMELINE: "timeline",
   SETTINGS: "settings",
+  TASKS: "tasks",
 };
 
 export const SETTINGS_KEY = {

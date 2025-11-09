@@ -4,6 +4,7 @@ import Settings from "../utils/settings";
 import Badge from "./badge";
 import Notifications from "./notifications";
 import Timeline from "../utils/timeline";
+import Tasks from "../utils/tasks";
 import {
   getMillisecondsToMinutesAndSeconds,
   getSecondsInMilliseconds,
@@ -21,6 +22,7 @@ export default class Timer {
     this.badge = new Badge();
     this.notifications = new Notifications(this.settings);
     this.timeline = new Timeline();
+    this.tasks = new Tasks();
 
     this.timeline.switchStorageFromSyncToLocal();
 
@@ -44,12 +46,13 @@ export default class Timer {
       scheduledTime: null,
       totalTime: 0,
       type: null,
+      taskId: null,
     };
 
     this.badge.setBadgeText("");
   }
 
-  setTimer(type) {
+  setTimer(type, taskId = null) {
     this.resetTimer();
     const badgeBackgroundColor = BADGE_BACKGROUND_COLOR_BY_TIMER_TYPE[type];
 
@@ -63,15 +66,25 @@ export default class Timer {
 
           if (timeLeft <= 0) {
             this.notifications.createBrowserNotification(timer.type);
-            this.timeline.addAlarmToTimeline(timer.type, timer.totalTime);
+            this.timeline.addAlarmToTimeline(
+              timer.type,
+              timer.totalTime,
+              timer.taskId,
+            );
+
+            // Increment task stats if this is a tomato with a task
+            if (timer.type === TIMER_TYPE.TOMATO && timer.taskId) {
+              const durationMinutes = timer.totalTime / 60000;
+              this.tasks.incrementTaskStats(timer.taskId, durationMinutes);
+            }
+
             this.resetTimer();
-            browser.runtime.sendMessage({type: "timer-finished"});
+            browser.runtime.sendMessage({ type: "timer-finished" });
           } else {
-            const minutesLeft = getMillisecondsToMinutesAndSeconds(
-              timeLeft
-            ).minutes.toString();
-            const secondsLeft = getMillisecondsToMinutesAndSeconds(timeLeft)
-              .seconds;
+            const minutesLeft =
+              getMillisecondsToMinutesAndSeconds(timeLeft).minutes.toString();
+            const secondsLeft =
+              getMillisecondsToMinutesAndSeconds(timeLeft).seconds;
 
             if (this.badge.getBadgeText() !== minutesLeft) {
               if (minutesLeft === "0" && secondsLeft < 60)
@@ -83,6 +96,7 @@ export default class Timer {
         scheduledTime: Date.now() + milliseconds,
         totalTime: milliseconds,
         type,
+        taskId,
       };
 
       const { minutes } = getMillisecondsToMinutesAndSeconds(milliseconds);
@@ -101,7 +115,7 @@ export default class Timer {
           this.resetTimer();
           break;
         case RUNTIME_ACTION.SET_TIMER:
-          this.setTimer(request.data.type);
+          this.setTimer(request.data.type, request.data.taskId);
           break;
         case RUNTIME_ACTION.GET_TIMER_SCHEDULED_TIME:
           // Hack because of difference in chrome and firefox
@@ -118,13 +132,13 @@ export default class Timer {
     browser.commands.onCommand.addListener((command) => {
       switch (command) {
         case "start-tomato":
-          this.setTimer(TIMER_TYPE.TOMATO);
+          this.setTimer(TIMER_TYPE.TOMATO, null);
           break;
         case "start-short-break":
-          this.setTimer(TIMER_TYPE.SHORT_BREAK);
+          this.setTimer(TIMER_TYPE.SHORT_BREAK, null);
           break;
         case "start-long-break":
-          this.setTimer(TIMER_TYPE.LONG_BREAK);
+          this.setTimer(TIMER_TYPE.LONG_BREAK, null);
           break;
         case "reset-timer":
           this.resetTimer();

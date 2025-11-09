@@ -7,8 +7,10 @@ Features:
 - Customizable timer lengths
 - Browser notifications
 - Stat tracking
+- Task tracking with to-do list
+- Per-task statistics
 
-You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete. Your stats are synced across devices using the browser's cloud storage support.
+You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete, and you can organize your work by creating tasks and tagging individual tomatoes with task names. View detailed statistics per task to understand where you're spending your time.
 
 Please file any issues or feature requests at https://github.com/ProgramminCat/tomato-clock-ng/issues.
 
@@ -77,7 +79,8 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
       "type": "tomato",
       "startTime": "2025-11-08T00:52:29.117Z",
       "endTime": "2025-11-08T00:53:29.117Z",
-      "duration": 60000
+      "duration": 60000,
+      "taskId": "1234567890"
     }
   ]
 }
@@ -90,3 +93,17 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
   - "type": is one of "tomato", "shortBreak", or "longBreak"
   - "startTime": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) of the time the timer started
   - "endTime": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) of the time the timer ended
+  - "taskId": (optional) the ID of the task associated with this timer entry
+
+## Task Management
+
+Tomato Clock NG includes a comprehensive task management system:
+
+- **Create and manage tasks**: Add tasks with names and descriptions
+- **Track progress**: Each task automatically tracks the number of tomatoes completed and total minutes worked
+- **Task selection**: When starting a tomato timer, optionally select a task to associate it with
+- **Task statistics**: View detailed statistics showing how many tomatoes and minutes you've spent on each task
+- **To-do list**: Mark tasks as complete when finished, and view active vs. completed tasks separately
+- **Per-task analytics**: The stats page shows a breakdown of your tomato sessions by task, including percentage of total time
+
+Tasks are stored locally and persist across browser sessions. Task data is separate from the timer statistics, so you can delete tasks without losing your tomato history.

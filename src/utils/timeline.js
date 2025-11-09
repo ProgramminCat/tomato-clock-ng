@@ -13,14 +13,14 @@ export default class Timeline {
 
   async _getLocalTimeline() {
     const localStorageResults = await browser.storage.local.get(
-      STORAGE_KEY.TIMELINE
+      STORAGE_KEY.TIMELINE,
     );
     return localStorageResults[STORAGE_KEY.TIMELINE];
   }
 
   async _getSyncTimeline() {
     const syncStorageResults = await browser.storage.sync.get(
-      STORAGE_KEY.TIMELINE
+      STORAGE_KEY.TIMELINE,
     );
     return syncStorageResults[STORAGE_KEY.TIMELINE];
   }
@@ -53,7 +53,7 @@ export default class Timeline {
     } else if (syncTimeline && localTimeline) {
       const mergedAndDedupedTimeline = getMergedAndDedupedArray(
         syncTimeline,
-        localTimeline
+        localTimeline,
       );
       await this._setLocalTimeline(mergedAndDedupedTimeline);
       await this._removeSyncTimelineIfLocalIsExpected(mergedAndDedupedTimeline);
@@ -99,24 +99,32 @@ export default class Timeline {
     return timeline.filter((entry) => {
       const eventTime = entry.endTime
         ? new Date(entry.endTime)
-        : (entry.date ? new Date(entry.date) : null);
+        : entry.date
+          ? new Date(entry.date)
+          : null;
       return eventTime && eventTime >= startDate && eventTime <= endDate;
     });
   }
 
-  async addAlarmToTimeline(type, totalTime) {
+  async addAlarmToTimeline(type, totalTime, taskId = null) {
     const timeline = await this._getRawTimeline();
 
     const startTime = new Date();
     const endTime = new Date(startTime.getTime() + totalTime);
     const duration = totalTime; // in ms
 
-    timeline.push({
+    const entry = {
       type,
       startTime: startTime.toISOString(),
       endTime: endTime.toISOString(),
       duration,
-    });
+    };
+
+    if (taskId) {
+      entry.taskId = taskId;
+    }
+
+    timeline.push(entry);
 
     try {
       await this.storage.set({ [STORAGE_KEY.TIMELINE]: timeline });

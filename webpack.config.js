@@ -12,6 +12,7 @@ module.exports = {
     panel: "./src/panel/panel.js",
     stats: "./src/stats/stats.js",
     options: "./src/options/options.js",
+    tasks: "./src/tasks/tasks.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -64,6 +65,12 @@ module.exports = {
       template: "src/options/options.html",
       filename: "options/options.html",
       chunks: ["options"],
+    }),
+    new HtmlWebpackPlugin({
+      title: "Tasks - Tomato Clock",
+      template: "src/tasks/tasks.html",
+      filename: "tasks/tasks.html",
+      chunks: ["tasks"],
     }),
     new CopyWebpackPlugin({
       patterns: [

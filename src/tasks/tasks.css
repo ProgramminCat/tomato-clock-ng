@@ -1,0 +1,162 @@
+.task-list {
+  margin-top: 20px;
+}
+
+.task-item {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.task-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-item.completed {
+  background-color: #f8f9fa;
+  opacity: 0.8;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.task-item.completed .task-title {
+  text-decoration: line-through;
+  color: #6c757d;
+}
+
+.task-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.task-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.task-stat-item .badge {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.task-description {
+  color: #6c757d;
+  font-size: 14px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.task-description:empty {
+  display: none;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.task-actions button {
+  font-size: 14px;
+}
+
+.task-metadata {
+  font-size: 12px;
+  color: #999;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 16px;
+}
+
+#add-task-form {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+#task-stats-content {
+  margin-top: 20px;
+}
+
+#task-stats-content .table {
+  background-color: #fff;
+}
+
+#task-stats-content .table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.stat-highlight {
+  font-weight: 600;
+  color: #dc3545;
+}
+
+.nav-tabs .nav-link {
+  cursor: pointer;
+}
+
+.nav-tabs .nav-link.active {
+  font-weight: 600;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .task-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .task-actions {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .task-actions button {
+    flex: 1;
+  }
+
+  .task-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
