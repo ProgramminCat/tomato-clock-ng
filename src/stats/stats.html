@@ -96,6 +96,36 @@
 
       <div class="row">
         <div class="col-md-12">
+          <h2 class="mt-4">Best Time of Day Analysis</h2>
+          <div id="time-of-day-section">
+            <p class="text-muted">
+              Discover when you're most productive throughout the day.
+            </p>
+            <div id="most-productive-time"></div>
+            <div id="time-of-day-chart-container">
+              <canvas id="time-of-day-chart"></canvas>
+            </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Time of Day</th>
+                  <th>Tomatoes</th>
+                  <th>Total Minutes</th>
+                  <th>Avg Minutes/Session</th>
+                </tr>
+              </thead>
+              <tbody id="time-of-day-stats-body">
+                <!-- Time of day stats will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-md-12">
           <h2 class="mt-4">Stats by Task</h2>
           <div id="task-stats-section">
             <p class="text-muted">
@@ -114,6 +144,34 @@
                 <!-- Task stats will be populated here -->
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="mt-4">Recent Sessions with Notes</h2>
+          <div id="session-history-section">
+            <p class="text-muted">
+              View your recent tomato sessions and the notes you added.
+            </p>
+            <div
+              class="form-group"
+              style="max-width: 200px; margin-bottom: 15px"
+            >
+              <label for="session-history-limit">Show last:</label>
+              <select id="session-history-limit" class="form-control">
+                <option value="10">10 sessions</option>
+                <option value="25" selected>25 sessions</option>
+                <option value="50">50 sessions</option>
+                <option value="100">100 sessions</option>
+              </select>
+            </div>
+            <div id="session-history-list">
+              <!-- Session history will be populated here -->
+            </div>
           </div>
         </div>
       </div>

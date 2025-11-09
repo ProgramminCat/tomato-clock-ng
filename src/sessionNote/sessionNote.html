@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Session Complete - Tomato Clock</title>
+  </head>
+
+  <body>
+    <div class="container session-note-container">
+      <div class="text-center">
+        <div class="success-icon">🎉</div>
+        <h2 class="mb-3">Great Work!</h2>
+        <p class="session-info">
+          You completed a <strong id="session-type">tomato</strong> session!
+        </p>
+
+        <div class="motivational-quote-section" id="motivational-quote-section">
+          <p class="motivational-quote" id="motivational-quote"></p>
+        </div>
+
+        <div class="note-section">
+          <label for="session-note-input" class="form-label">
+            What did you accomplish? (optional)
+          </label>
+          <textarea
+            id="session-note-input"
+            class="form-control"
+            placeholder="E.g., Completed code review, wrote 500 words, fixed bug #123..."
+            rows="4"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">
+            <small class="text-muted">
+              <span id="char-count">0</span>/500 characters
+            </small>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button
+            type="button"
+            class="btn btn-primary btn-lg"
+            id="save-note-button"
+          >
+            Save Note
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="skip-note-button"
+          >
+            Skip
+          </button>
+        </div>
+
+        <div class="quick-actions">
+          <p class="quick-actions-label">What's next?</p>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            id="start-tomato-button"
+          >
+            🍅 Start Another Tomato
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            id="start-break-button"
+          >
+            ☕ Take a Break
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="session-data" style="display: none"></div>
+  </body>
+</html>

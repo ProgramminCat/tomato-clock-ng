@@ -9,6 +9,10 @@ Features:
 - Stat tracking
 - Task tracking with to-do list
 - Per-task statistics
+- **Session notes** - Add quick notes about what you accomplished after completing each tomato
+- **Best time of day analysis** - Discover when you're most productive (morning/afternoon/evening/night)
+- **Motivational quotes** - Receive inspirational messages between sessions to stay motivated
+- **Dark mode** - Full dark theme option for comfortable viewing in any lighting condition
 
 You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete, and you can organize your work by creating tasks and tagging individual tomatoes with task names. View detailed statistics per task to understand where you're spending your time.
 
@@ -94,6 +98,7 @@ The expected formatting of Tomato Clock NG's .json files that store statistics i
   - "startTime": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) of the time the timer started
   - "endTime": is the exact date and time string in the [ISOString format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) of the time the timer ended
   - "taskId": (optional) the ID of the task associated with this timer entry
+  - "note": (optional) a text note describing what was accomplished during this session
 
 ## Task Management
 

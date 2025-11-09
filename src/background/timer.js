@@ -47,6 +47,7 @@ export default class Timer {
       totalTime: 0,
       type: null,
       taskId: null,
+      startTime: null,
     };
 
     this.badge.setBadgeText("");
@@ -65,7 +66,20 @@ export default class Timer {
           const timeLeft = timer.scheduledTime - Date.now();
 
           if (timeLeft <= 0) {
-            this.notifications.createBrowserNotification(timer.type);
+
+            const sessionData = {
+              type: timer.type,
+              totalTime: timer.totalTime,
+              taskId: timer.taskId,
+              startTime: timer.startTime,
+            };
+
+            this.notifications.createBrowserNotification(
+              timer.type,
+              sessionData,
+            );
+
+            
             this.timeline.addAlarmToTimeline(
               timer.type,
               timer.totalTime,
@@ -79,7 +93,10 @@ export default class Timer {
             }
 
             this.resetTimer();
-            browser.runtime.sendMessage({ type: "timer-finished" });
+            browser.runtime.sendMessage({
+              type: "timer-finished",
+              sessionData: sessionData,
+            });
           } else {
             const minutesLeft =
               getMillisecondsToMinutesAndSeconds(timeLeft).minutes.toString();
@@ -97,6 +114,7 @@ export default class Timer {
         totalTime: milliseconds,
         type,
         taskId,
+        startTime: Date.now(),
       };
 
       const { minutes } = getMillisecondsToMinutesAndSeconds(milliseconds);

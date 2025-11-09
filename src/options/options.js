@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./options.css";
 
@@ -10,20 +12,35 @@ export default class Options {
 
     this.domMinutesInTomato = document.getElementById("minutes-in-tomato");
     this.domMinutesInShortBreak = document.getElementById(
-      "minutes-in-short-break"
+      "minutes-in-short-break",
     );
     this.domMinutesInLongBreak = document.getElementById(
-      "minutes-in-long-break"
+      "minutes-in-long-break",
     );
     this.domNotificationSoundCheckbox = document.getElementById(
-      "notification-sound-checkbox"
+      "notification-sound-checkbox",
     );
     this.domToolbarBadgeCheckbox = document.getElementById(
-      "toolbar-badge-checkbox"
+      "toolbar-badge-checkbox",
+    );
+    this.domDarkModeCheckbox = document.getElementById("dark-mode-checkbox");
+    this.domMotivationalQuotesCheckbox = document.getElementById(
+      "motivational-quotes-checkbox",
     );
 
     this.setOptionsOnPage();
     this.setEventListeners();
+    this.applyDarkMode();
+  }
+
+  async applyDarkMode() {
+    const settings = await this.settings.getSettings();
+
+    if (settings.isDarkModeEnabled) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   }
 
   setOptionsOnPage() {
@@ -34,6 +51,8 @@ export default class Options {
         minutesInLongBreak,
         isNotificationSoundEnabled,
         isToolbarBadgeEnabled,
+        isDarkModeEnabled,
+        isMotivationalQuotesEnabled,
       } = settings;
 
       this.domMinutesInTomato.value = minutesInTomato;
@@ -41,6 +60,8 @@ export default class Options {
       this.domMinutesInLongBreak.value = minutesInLongBreak;
       this.domNotificationSoundCheckbox.checked = isNotificationSoundEnabled;
       this.domToolbarBadgeCheckbox.checked = isToolbarBadgeEnabled;
+      this.domDarkModeCheckbox.checked = isDarkModeEnabled;
+      this.domMotivationalQuotesCheckbox.checked = isMotivationalQuotesEnabled;
     });
   }
 
@@ -48,9 +69,12 @@ export default class Options {
     const minutesInTomato = parseInt(this.domMinutesInTomato.value);
     const minutesInShortBreak = parseInt(this.domMinutesInShortBreak.value);
     const minutesInLongBreak = parseInt(this.domMinutesInLongBreak.value);
-    const isNotificationSoundEnabled = this.domNotificationSoundCheckbox
-      .checked;
+    const isNotificationSoundEnabled =
+      this.domNotificationSoundCheckbox.checked;
     const isToolbarBadgeEnabled = this.domToolbarBadgeCheckbox.checked;
+    const isDarkModeEnabled = this.domDarkModeCheckbox.checked;
+    const isMotivationalQuotesEnabled =
+      this.domMotivationalQuotesCheckbox.checked;
 
     this.settings.saveSettings({
       [SETTINGS_KEY.MINUTES_IN_TOMATO]: minutesInTomato,
@@ -58,7 +82,12 @@ export default class Options {
       [SETTINGS_KEY.MINUTES_IN_LONG_BREAK]: minutesInLongBreak,
       [SETTINGS_KEY.IS_NOTIFICATION_SOUND_ENABLED]: isNotificationSoundEnabled,
       [SETTINGS_KEY.IS_TOOLBAR_BADGE_ENABLED]: isToolbarBadgeEnabled,
+      [SETTINGS_KEY.IS_DARK_MODE_ENABLED]: isDarkModeEnabled,
+      [SETTINGS_KEY.IS_MOTIVATIONAL_QUOTES_ENABLED]:
+        isMotivationalQuotesEnabled,
     });
+
+    this.applyDarkMode();
   }
 
   setEventListeners() {
@@ -71,6 +100,10 @@ export default class Options {
       this.settings.resetSettings().then(() => {
         this.setOptionsOnPage();
       });
+    });
+
+    this.domDarkModeCheckbox.addEventListener("change", () => {
+      this.applyDarkMode();
     });
   }
 }

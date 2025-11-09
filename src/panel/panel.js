@@ -3,7 +3,11 @@ import browser from "webextension-polyfill";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./panel.css";
 
-import { RUNTIME_ACTION, TIMER_TYPE } from "../utils/constants";
+import {
+  RUNTIME_ACTION,
+  TIMER_TYPE,
+  MOTIVATIONAL_QUOTES,
+} from "../utils/constants";
 import {
   getMillisecondsToTimeText,
   getSecondsInMilliseconds,
@@ -19,7 +23,11 @@ export default class Panel {
     this.currentTimeText = document.getElementById("current-time-text");
     this.presetSelect = document.getElementById("preset-select");
     this.taskSelect = document.getElementById("task-select");
+    this.motivationalQuote = document.getElementById("motivational-quote");
     this.timer = {};
+
+    this.applyDarkMode();
+    this.showMotivationalQuote();
 
     browser.runtime
       .sendMessage({
@@ -34,6 +42,45 @@ export default class Panel {
     this.setEventListeners();
     this.setPresetFromSettings();
     this.loadTasks();
+
+    browser.runtime.onMessage.addListener((message) => {
+      if (message.type === "timer-finished") {
+        this.showMotivationalQuote();
+      }
+    });
+
+    browser.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === "sync" || areaName === "local") {
+        if (changes.settings) {
+          this.applyDarkMode();
+        }
+      }
+    });
+  }
+
+  async applyDarkMode() {
+    const settings = await this.settings.getSettings();
+
+    if (settings.isDarkModeEnabled) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }
+
+  async showMotivationalQuote() {
+    const settings = await this.settings.getSettings();
+
+    if (settings.isMotivationalQuotesEnabled) {
+      const randomQuote =
+        MOTIVATIONAL_QUOTES[
+          Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)
+        ];
+      this.motivationalQuote.textContent = randomQuote;
+      this.motivationalQuote.style.display = "block";
+    } else {
+      this.motivationalQuote.style.display = "none";
+    }
   }
 
   setEventListeners() {

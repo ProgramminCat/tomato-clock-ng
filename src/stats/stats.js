@@ -11,13 +11,24 @@ import "./stats.css";
 
 import Timeline from "../utils/timeline";
 import Tasks from "../utils/tasks";
+import Settings from "../utils/settings";
 import {
   getDateLabel,
   getDateRangeStringArray,
   getZeroArray,
   getFilenameDate,
 } from "../utils/utils";
-import { DATE_UNIT, TIMER_TYPE } from "../utils/constants";
+import {
+  DATE_UNIT,
+  TIMER_TYPE,
+  TIME_OF_DAY,
+  TIME_OF_DAY_LABELS,
+} from "../utils/constants";
+import {
+  analyzeProductivityByTimeOfDay,
+  getMostProductiveTimeOfDay,
+  formatTimeOfDayStats,
+} from "../utils/timeAnalysis";
 
 Chart.register(...registerables);
 
@@ -50,11 +61,20 @@ export default class Stats {
       "average-tomato-minutes-month",
     );
     this.taskStatsBody = document.getElementById("task-stats-body");
+    this.timeOfDayStatsBody = document.getElementById("time-of-day-stats-body");
+    this.mostProductiveTime = document.getElementById("most-productive-time");
+    this.sessionHistoryList = document.getElementById("session-history-list");
+    this.sessionHistoryLimit = document.getElementById("session-history-limit");
 
     this.ctx = document
       .getElementById("completed-tomato-dates-chart")
       .getContext("2d");
     this.completedTomatoesChart = null;
+
+    this.timeOfDayCtx = document
+      .getElementById("time-of-day-chart")
+      .getContext("2d");
+    this.timeOfDayChart = null;
 
     this.handleResetStatsButtonClick =
       this.handleResetStatsButtonClick.bind(this);
@@ -79,7 +99,9 @@ export default class Stats {
 
     this.timeline = new Timeline();
     this.tasks = new Tasks();
+    this.settings = new Settings();
     this.resetDateRange();
+    this.applyDarkMode();
 
     this.importLegacyStatsButton = document.getElementById(
       "import-legacy-stats-button",
@@ -97,6 +119,30 @@ export default class Stats {
       "change",
       this.handleImportStatsHiddenInputChange.bind(this),
     );
+
+    browser.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === "sync" || areaName === "local") {
+        if (changes.settings) {
+          this.applyDarkMode();
+        }
+      }
+    });
+
+    if (this.sessionHistoryLimit) {
+      this.sessionHistoryLimit.addEventListener("change", () => {
+        this.loadSessionHistory();
+      });
+    }
+  }
+
+  async applyDarkMode() {
+    const settings = await this.settings.getSettings();
+
+    if (settings.isDarkModeEnabled) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   }
 
   handleResetStatsButtonClick() {
@@ -401,8 +447,12 @@ export default class Stats {
     document.getElementById("current-streak-count").textContent =
       stats.currentStreak;
 
-    // Load task-based statistics
+    
     this.loadTaskStats(startDate, endDate);
+
+    this.loadTimeOfDayStats(startDate, endDate);
+
+    this.loadSessionHistory();
   }
 
   async loadTaskStats(startDate, endDate) {
@@ -500,6 +550,238 @@ export default class Stats {
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  async loadTimeOfDayStats(startDate, endDate) {
+    const filteredTimeline = await this.timeline.getFilteredTimeline(
+      startDate,
+      endDate,
+    );
+
+    const timeOfDayStats = analyzeProductivityByTimeOfDay(filteredTimeline);
+    const mostProductive = getMostProductiveTimeOfDay(timeOfDayStats);
+    const formattedStats = formatTimeOfDayStats(timeOfDayStats);
+
+    if (mostProductive && timeOfDayStats[mostProductive].count > 0) {
+      this.mostProductiveTime.innerHTML = `
+        <p>Your most productive time is:
+          <span class="most-productive-badge">
+            ${TIME_OF_DAY_LABELS[mostProductive]}
+          </span>
+        </p>
+      `;
+    } else {
+      this.mostProductiveTime.innerHTML = `
+        <p class="text-muted">Complete more tomatoes to see your most productive time of day!</p>
+      `;
+    }
+
+    // Render time of day table
+    this.renderTimeOfDayTable(formattedStats);
+
+    // Render time of day chart
+    this.renderTimeOfDayChart(formattedStats);
+  }
+
+  renderTimeOfDayTable(formattedStats) {
+    if (!this.timeOfDayStatsBody) return;
+
+    this.timeOfDayStatsBody.innerHTML = "";
+
+    formattedStats.forEach((stat) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${TIME_OF_DAY_LABELS[stat.timeOfDay]}</td>
+        <td>${stat.count}</td>
+        <td>${stat.totalMinutes}</td>
+        <td>${stat.avgMinutesPerSession}</td>
+      `;
+      this.timeOfDayStatsBody.appendChild(row);
+    });
+  }
+
+  renderTimeOfDayChart(formattedStats) {
+    // Destroy existing chart if it exists
+    if (this.timeOfDayChart) {
+      this.timeOfDayChart.destroy();
+    }
+
+    const labels = formattedStats.map(
+      (stat) => TIME_OF_DAY_LABELS[stat.timeOfDay],
+    );
+    const data = formattedStats.map((stat) => stat.count);
+
+    this.timeOfDayChart = new Chart(this.timeOfDayCtx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Tomatoes Completed",
+            data: data,
+            backgroundColor: [
+              "rgba(255, 206, 86, 0.6)",
+              "rgba(54, 162, 235, 0.6)",
+              "rgba(255, 99, 132, 0.6)",
+              "rgba(75, 192, 192, 0.6)",
+            ],
+            borderColor: [
+              "rgba(255, 206, 86, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 99, 132, 1)",
+              "rgba(75, 192, 192, 1)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: "Productivity by Time of Day",
+          },
+        },
+      },
+    });
+  }
+
+  async loadSessionHistory() {
+    if (!this.sessionHistoryList) return;
+
+    const limit = parseInt(this.sessionHistoryLimit?.value || "25");
+
+    try {
+      // Get all timeline entries
+      const timeline = await this.timeline.getTimeline();
+
+      // Filter only tomato sessions and sort by most recent
+      const sessions = timeline
+        .filter((entry) => entry.type === "tomato")
+        .sort((a, b) => {
+          const dateA = a.endTime ? new Date(a.endTime) : new Date(0);
+          const dateB = b.endTime ? new Date(b.endTime) : new Date(0);
+          return dateB - dateA;
+        })
+        .slice(0, limit);
+
+      // Get all tasks for reference
+      const allTasks = await this.tasks.getTasks();
+      const taskMap = {};
+      allTasks.forEach((task) => {
+        taskMap[task.id] = task.name;
+      });
+
+      // Render session cards
+      this.renderSessionHistory(sessions, taskMap);
+    } catch (error) {
+      console.error("Error loading session history:", error);
+      this.sessionHistoryList.innerHTML = `
+        <p class="text-muted">Error loading session history.</p>
+      `;
+    }
+  }
+
+  renderSessionHistory(sessions, taskMap) {
+    if (!this.sessionHistoryList) return;
+
+    // Check if there are any sessions with notes
+    const sessionsWithNotes = sessions.filter((s) => s.note && s.note.trim());
+
+    if (sessions.length === 0) {
+      this.sessionHistoryList.innerHTML = `
+        <div class="no-notes-message">
+          <p>No tomato sessions found yet.</p>
+          <p>Complete a tomato session to start building your history!</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (sessionsWithNotes.length === 0) {
+      this.sessionHistoryList.innerHTML = `
+        <div class="no-notes-message">
+          <p>No session notes found yet.</p>
+          <p>After completing a tomato session, add notes about what you accomplished!</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Build HTML for session cards
+    const cardsHTML = sessions
+      .map((session) => {
+        const endTime = session.endTime ? new Date(session.endTime) : null;
+        const dateStr = endTime
+          ? endTime.toLocaleString(undefined, {
+              weekday: "short",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "Unknown date";
+
+        const durationMin = session.duration
+          ? Math.round(session.duration / 60000)
+          : 0;
+
+        const taskName = session.taskId
+          ? taskMap[session.taskId] || "Unknown Task"
+          : null;
+
+        const hasNote = session.note && session.note.trim();
+
+        // Only show sessions with notes
+        if (!hasNote) return "";
+
+        return `
+          <div class="session-card">
+            <div class="session-card-header">
+              <span class="session-type-badge session-type-${session.type}">
+                🍅 Tomato (${durationMin}m)
+              </span>
+              <span class="session-date">${this.escapeHtml(dateStr)}</span>
+            </div>
+            <div class="session-card-body">
+              ${
+                taskName
+                  ? `<div class="session-task-info">
+                    Task: <span class="session-task-name">${this.escapeHtml(taskName)}</span>
+                  </div>`
+                  : ""
+              }
+              <div class="session-note-content">
+                ${this.escapeHtml(session.note)}
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .filter((html) => html) // Remove empty strings
+      .join("");
+
+    this.sessionHistoryList.innerHTML =
+      cardsHTML ||
+      `
+      <div class="no-notes-message">
+        <p>No session notes in the selected range.</p>
+      </div>
+    `;
   }
 }
 

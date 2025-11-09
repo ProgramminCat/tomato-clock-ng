@@ -5,6 +5,7 @@ import "./tasks.css";
 
 import Tasks from "../utils/tasks";
 import Timeline from "../utils/timeline";
+import Settings from "../utils/settings";
 import { TIMER_TYPE } from "../utils/constants";
 
 browser.runtime.onMessage.addListener((message) => {
@@ -17,6 +18,7 @@ export default class TasksPage {
   constructor() {
     this.tasks = new Tasks();
     this.timeline = new Timeline();
+    this.settings = new Settings();
 
     this.addTaskForm = document.getElementById("add-task-form");
     this.taskNameInput = document.getElementById("task-name-input");
@@ -38,6 +40,26 @@ export default class TasksPage {
     this.setEventListeners();
     this.loadAllTasks();
     this.loadTaskStats();
+    this.applyDarkMode();
+
+    // Listen for settings changes to update dark mode
+    browser.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === "sync" || areaName === "local") {
+        if (changes.settings) {
+          this.applyDarkMode();
+        }
+      }
+    });
+  }
+
+  async applyDarkMode() {
+    const settings = await this.settings.getSettings();
+
+    if (settings.isDarkModeEnabled) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   }
 
   setEventListeners() {

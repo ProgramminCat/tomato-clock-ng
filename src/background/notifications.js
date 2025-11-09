@@ -9,7 +9,7 @@ export default class Notifications {
     this.setListeners();
   }
 
-  createBrowserNotification(timerType) {
+  createBrowserNotification(timerType, sessionData = null) {
     let message = "";
 
     switch (timerType) {
@@ -39,6 +39,17 @@ export default class Notifications {
         new Audio("/assets/sounds/Portal2_sfx_button_positive.mp3").play();
       }
     });
+
+    // Open session note popup for completed tomato sessions
+    if (timerType === TIMER_TYPE.TOMATO && sessionData) {
+      const sessionDataStr = encodeURIComponent(JSON.stringify(sessionData));
+      browser.windows.create({
+        url: `/sessionNote/sessionNote.html?sessionData=${sessionDataStr}`,
+        type: "popup",
+        width: 550,
+        height: 600,
+      });
+    }
   }
 
   async createStorageLimitNotification() {

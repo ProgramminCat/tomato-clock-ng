@@ -106,7 +106,7 @@ export default class Timeline {
     });
   }
 
-  async addAlarmToTimeline(type, totalTime, taskId = null) {
+  async addAlarmToTimeline(type, totalTime, taskId = null, note = null) {
     const timeline = await this._getRawTimeline();
 
     const startTime = new Date();
@@ -122,6 +122,10 @@ export default class Timeline {
 
     if (taskId) {
       entry.taskId = taskId;
+    }
+
+    if (note) {
+      entry.note = note;
     }
 
     timeline.push(entry);

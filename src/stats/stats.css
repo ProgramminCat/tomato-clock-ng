@@ -1,3 +1,9 @@
+body {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
 .container {
   padding-bottom: 15px;
 }
@@ -43,4 +49,327 @@
 
 #task-stats-body tr:hover {
   background-color: #f8f9fa;
+}
+
+/* Time of Day Analysis Styles */
+#time-of-day-section {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+#time-of-day-chart-container {
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.most-productive-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 10px 0;
+  background-color: #28a745;
+  color: white;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .container {
+  background-color: #1a1a1a;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+  color: #e0e0e0;
+}
+
+body.dark-mode .form-control {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #3d3d3d;
+}
+
+body.dark-mode .form-control:focus {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #dc3545;
+}
+
+body.dark-mode label,
+body.dark-mode .control-label {
+  color: #b0b0b0;
+}
+
+body.dark-mode .table {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #3d3d3d;
+}
+
+body.dark-mode #task-stats-section .table {
+  background-color: #2d2d2d;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode #task-stats-section .table thead th {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border-bottom-color: #3d3d3d;
+}
+
+body.dark-mode #task-stats-section .table tbody td {
+  color: #e0e0e0;
+  border-color: #3d3d3d;
+}
+
+body.dark-mode #task-stats-body tr:hover {
+  background-color: #3d3d3d;
+}
+
+body.dark-mode .table thead th,
+body.dark-mode .table tbody td {
+  border-color: #3d3d3d;
+}
+
+body.dark-mode .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+body.dark-mode .btn-secondary {
+  background-color: #4a4a4a;
+  border-color: #3d3d3d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .btn-secondary:hover {
+  background-color: #5a5a5a;
+  border-color: #4a4a4a;
+}
+
+body.dark-mode .btn-warning {
+  background-color: #cc8800;
+  border-color: #b37700;
+  color: #1a1a1a;
+}
+
+body.dark-mode .btn-warning:hover {
+  background-color: #e69500;
+  border-color: #cc8800;
+}
+
+body.dark-mode .btn-info {
+  background-color: #0dcaf0;
+  border-color: #0dcaf0;
+  color: #000;
+}
+
+body.dark-mode .btn-info:hover {
+  background-color: #31d2f2;
+  border-color: #25cff2;
+}
+
+body.dark-mode hr {
+  border-color: #3d3d3d;
+}
+
+body.dark-mode .text-muted {
+  color: #8d8d8d !important;
+}
+
+body.dark-mode #stats-calendar {
+  background-color: #2d2d2d;
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+body.dark-mode .fc {
+  color: #e0e0e0;
+}
+
+body.dark-mode .fc-theme-standard td,
+body.dark-mode .fc-theme-standard th {
+  border-color: #3d3d3d;
+}
+
+body.dark-mode .fc-toolbar-title {
+  color: #e0e0e0;
+}
+
+body.dark-mode .fc-button {
+  background-color: #4a4a4a;
+  border-color: #3d3d3d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .fc-button:hover {
+  background-color: #5a5a5a;
+}
+
+body.dark-mode .fc-button-active {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+body.dark-mode .fc-day-other {
+  background-color: #1a1a1a;
+}
+
+body.dark-mode .most-productive-badge {
+  background-color: #198754;
+  color: white;
+}
+
+/* Session History Styles */
+#session-history-section {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+#session-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.session-card {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.session-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.session-type-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.session-type-tomato {
+  background-color: #dc3545;
+  color: white;
+}
+
+.session-type-shortBreak {
+  background-color: #6c757d;
+  color: white;
+}
+
+.session-type-longBreak {
+  background-color: #495057;
+  color: white;
+}
+
+.session-date {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.session-card-body {
+  margin-top: 10px;
+}
+
+.session-note-content {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #dc3545;
+  margin-top: 10px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.session-task-info {
+  font-size: 13px;
+  color: #6c757d;
+  margin-top: 8px;
+}
+
+.session-task-name {
+  font-weight: 600;
+  color: #495057;
+}
+
+.no-notes-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.empty-session-note {
+  font-style: italic;
+  color: #adb5bd;
+  font-size: 13px;
+}
+
+/* Dark Mode Session History Styles */
+body.dark-mode .session-card {
+  background-color: #2d2d2d;
+  border-color: #3d3d3d;
+}
+
+body.dark-mode .session-card-header {
+  border-bottom-color: #3d3d3d;
+}
+
+body.dark-mode .session-date {
+  color: #b0b0b0;
+}
+
+body.dark-mode .session-note-content {
+  background-color: #1a1a1a;
+  border-left-color: #ff6b6b;
+  color: #e0e0e0;
+}
+
+body.dark-mode .session-task-info {
+  color: #b0b0b0;
+}
+
+body.dark-mode .session-task-name {
+  color: #e0e0e0;
+}
+
+body.dark-mode .no-notes-message {
+  background-color: #2d2d2d;
+  border-color: #3d3d3d;
+  color: #b0b0b0;
+}
+
+body.dark-mode .empty-session-note {
+  color: #6c757d;
 }
