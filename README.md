@@ -21,6 +21,7 @@ Please file any issues or feature requests at https://github.com/ProgramminCat/t
 
 ## Installation
 
+- [Github Releases (Firefox signed .xpi file)](https://github.com/ProgramminCat/tomato-clock-ng/releases)
 - [Firefox AMO (Coming Soon)](https://example.com)
 - [Chrome Web Store (Coming Soon)](https://example.com)
 
