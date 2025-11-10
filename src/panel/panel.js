@@ -15,11 +15,13 @@ import {
 } from "../utils/utils";
 import Settings from "../utils/settings";
 import Tasks from "../utils/tasks";
+import Gamification from "../utils/gamification";
 
 export default class Panel {
   constructor() {
     this.settings = new Settings();
     this.tasks = new Tasks();
+    this.gamification = new Gamification();
     this.currentTimeText = document.getElementById("current-time-text");
     this.presetSelect = document.getElementById("preset-select");
     this.taskSelect = document.getElementById("task-select");
@@ -28,6 +30,7 @@ export default class Panel {
 
     this.applyDarkMode();
     this.showMotivationalQuote();
+    this.loadLevelProgress();
 
     browser.runtime
       .sendMessage({
@@ -46,6 +49,10 @@ export default class Panel {
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === "timer-finished") {
         this.showMotivationalQuote();
+      }
+      if (message.type === "gamification-update") {
+        this.loadLevelProgress();
+        this.showLevelUpNotification(message.data);
       }
     });
 
@@ -125,6 +132,56 @@ export default class Panel {
     document.getElementById("options-link").addEventListener("click", () => {
       browser.runtime.openOptionsPage();
     });
+
+    document
+      .getElementById("achievements-link")
+      .addEventListener("click", () => {
+        browser.tabs.create({ url: "/achievements/achievements.html" });
+      });
+  }
+
+  async loadLevelProgress() {
+    try {
+      const data = await this.gamification.getData();
+      const levelInfo = this.gamification.getLevelInfo(data.level);
+      const progress = this.gamification.getProgressToNextLevel(
+        data.xp,
+        data.level,
+      );
+
+      document.getElementById("level-icon").textContent = levelInfo.icon;
+      document.getElementById("current-level").textContent = data.level;
+      document.getElementById("level-name").textContent = levelInfo.name;
+
+      if (progress.xpTotal) {
+        document.getElementById("current-xp").textContent = progress.xpCurrent;
+        document.getElementById("next-level-xp").textContent =
+          progress.xpNeeded;
+        document.getElementById("level-progress-bar").style.width =
+          `${progress.percentage}%`;
+      } else {
+        document.getElementById("current-xp").textContent = data.xp;
+        document.getElementById("next-level-xp").textContent = "MAX";
+        document.getElementById("level-progress-bar").style.width = "100%";
+      }
+    } catch (error) {
+      console.error("Error loading level progress:", error);
+    }
+  }
+
+  showLevelUpNotification(data) {
+    if (data.xpResult && data.xpResult.leveledUp) {
+      const levelInfo = this.gamification.getLevelInfo(data.xpResult.level);
+      console.log(
+        `🎉 Level Up! You reached Level ${data.xpResult.level} - ${levelInfo.name}`,
+      );
+    }
+
+    if (data.newBadges && data.newBadges.length > 0) {
+      data.newBadges.forEach((badge) => {
+        console.log(`🏆 New Badge Unlocked: ${badge.icon} ${badge.name}`);
+      });
+    }
   }
 
   async loadTasks() {

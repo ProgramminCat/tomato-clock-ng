@@ -14,6 +14,7 @@ module.exports = {
     options: "./src/options/options.js",
     tasks: "./src/tasks/tasks.js",
     sessionNote: "./src/sessionNote/sessionNote.js",
+    achievements: "./src/achievements/achievements.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -78,6 +79,12 @@ module.exports = {
       template: "src/sessionNote/sessionNote.html",
       filename: "sessionNote/sessionNote.html",
       chunks: ["sessionNote"],
+    }),
+    new HtmlWebpackPlugin({
+      title: "Achievements - Tomato Clock",
+      template: "src/achievements/achievements.html",
+      filename: "achievements/achievements.html",
+      chunks: ["achievements"],
     }),
     new CopyWebpackPlugin({
       patterns: [

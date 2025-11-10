@@ -71,6 +71,9 @@
         </button>
         <br />
         <div class="info-buttons">
+          <button type="button" class="btn btn-link" id="achievements-link">
+            Achievements
+          </button>
           <button type="button" class="btn btn-link" id="tasks-link">
             Tasks
           </button>
@@ -80,6 +83,49 @@
           <button type="button" class="btn btn-link" id="options-link">
             Options
           </button>
+        </div>
+        <div
+          id="level-display"
+          style="
+            margin-top: 12px;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+          "
+        >
+          <div style="font-weight: 600; margin-bottom: 4px">
+            <span id="level-icon">🌱</span> Level
+            <span id="current-level">1</span> -
+            <span id="level-name">Beginner</span>
+          </div>
+          <div style="font-size: 11px; margin-bottom: 6px">
+            <span id="current-xp">0</span> /
+            <span id="next-level-xp">100</span> XP
+          </div>
+          <div
+            style="
+              width: 100%;
+              height: 6px;
+              background-color: rgba(255, 255, 255, 0.3);
+              border-radius: 3px;
+              overflow: hidden;
+            "
+          >
+            <div
+              id="level-progress-bar"
+              style="
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.5s ease;
+              "
+            ></div>
+          </div>
         </div>
         <div style="margin-top: 12px; text-align: left">
           <label for="preset-select" style="font-size: 12px">Preset:</label>

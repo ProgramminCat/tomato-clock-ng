@@ -42,6 +42,8 @@ export const RUNTIME_ACTION = {
   SET_TIMER: "setTimer",
   RESET_TIMER: "resetTimer",
   GET_TIMER_SCHEDULED_TIME: "getTimerScheduledTime",
+  GET_GAMIFICATION_DATA: "getGamificationData",
+  GET_LEVEL_PROGRESS: "getLevelProgress",
 };
 
 export const DATE_UNIT = {

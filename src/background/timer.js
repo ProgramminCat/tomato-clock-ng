@@ -5,6 +5,7 @@ import Badge from "./badge";
 import Notifications from "./notifications";
 import Timeline from "../utils/timeline";
 import Tasks from "../utils/tasks";
+import Gamification from "../utils/gamification";
 import {
   getMillisecondsToMinutesAndSeconds,
   getSecondsInMilliseconds,
@@ -23,6 +24,7 @@ export default class Timer {
     this.notifications = new Notifications(this.settings);
     this.timeline = new Timeline();
     this.tasks = new Tasks();
+    this.gamification = new Gamification();
 
     this.timeline.switchStorageFromSyncToLocal();
 
@@ -66,7 +68,6 @@ export default class Timer {
           const timeLeft = timer.scheduledTime - Date.now();
 
           if (timeLeft <= 0) {
-
             const sessionData = {
               type: timer.type,
               totalTime: timer.totalTime,
@@ -74,12 +75,40 @@ export default class Timer {
               startTime: timer.startTime,
             };
 
-            this.notifications.createBrowserNotification(
-              timer.type,
-              sessionData,
-            );
-
             
+            const durationMinutes = timer.totalTime / 60000;
+            this.gamification
+              .recordSessionCompletion(timer.type, durationMinutes)
+              .then((result) => {
+                sessionData.gamificationData = result;
+
+                this.notifications.createBrowserNotification(
+                  timer.type,
+                  sessionData,
+                );
+
+                browser.runtime.sendMessage({
+                  type: "gamification-update",
+                  data: result,
+                });
+
+                browser.runtime.sendMessage({
+                  type: "timer-finished",
+                  sessionData: sessionData,
+                });
+              })
+              .catch((error) => {
+                console.error("Error recording gamification:", error);
+                this.notifications.createBrowserNotification(
+                  timer.type,
+                  sessionData,
+                );
+                browser.runtime.sendMessage({
+                  type: "timer-finished",
+                  sessionData: sessionData,
+                });
+              });
+
             this.timeline.addAlarmToTimeline(
               timer.type,
               timer.totalTime,
@@ -93,10 +122,6 @@ export default class Timer {
             }
 
             this.resetTimer();
-            browser.runtime.sendMessage({
-              type: "timer-finished",
-              sessionData: sessionData,
-            });
           } else {
             const minutesLeft =
               getMillisecondsToMinutesAndSeconds(timeLeft).minutes.toString();
@@ -142,6 +167,24 @@ export default class Timer {
             sendResponse(this.getTimerScheduledTime());
           }
           return this.getTimerScheduledTime();
+        case RUNTIME_ACTION.GET_GAMIFICATION_DATA:
+          this.gamification.getData().then((data) => {
+            if (sendResponse) {
+              sendResponse(data);
+            }
+          });
+          return true;
+        case RUNTIME_ACTION.GET_LEVEL_PROGRESS:
+          this.gamification.getData().then((data) => {
+            const progress = this.gamification.getProgressToNextLevel(
+              data.xp,
+              data.level,
+            );
+            if (sendResponse) {
+              sendResponse(progress);
+            }
+          });
+          return true;
         default:
           break;
       }

@@ -13,6 +13,7 @@ Features:
 - **Best time of day analysis** - Discover when you're most productive (morning/afternoon/evening/night)
 - **Motivational quotes** - Receive inspirational messages between sessions to stay motivated
 - **Dark mode** - Full dark theme option for comfortable viewing in any lighting condition
+- **Gamification** - Earn XP, level up, unlock badges and achievements to stay motivated and track your productivity journey
 
 You can customize the length of the Tomatoes and breaks in the extension page. The extension uses the default browser notification system, accompanied by a sound, to let you know when the timer is over. The extension also features stats for tracking how many Tomatoes you complete, and you can organize your work by creating tasks and tagging individual tomatoes with task names. View detailed statistics per task to understand where you're spending your time.
 
@@ -112,3 +113,41 @@ Tomato Clock NG includes a comprehensive task management system:
 - **Per-task analytics**: The stats page shows a breakdown of your tomato sessions by task, including percentage of total time
 
 Tasks are stored locally and persist across browser sessions. Task data is separate from the timer statistics, so you can delete tasks without losing your tomato history.
+
+## Gamification System
+
+Tomato Clock NG includes a comprehensive gamification system to make productivity tracking more engaging and rewarding:
+
+### Experience Points (XP) & Levels
+
+- **Earn XP** for completing tomato sessions, short breaks, and long breaks
+- **Level up** from Beginner (Level 1) to Mythic (Level 10) by accumulating XP
+- **Streak bonuses** - Earn bonus XP for maintaining daily completion streaks
+- **Progress tracking** - View your current level and progress to the next level in the panel
+
+### Badges & Achievements
+
+Unlock over 20 unique badges across 5 tiers:
+- **Bronze**
+- **Silver**
+- **Gold**
+- **Platinum**
+- **Diamond**
+
+Badge categories include:
+- **Completion badges** - Unlock badges for reaching tomato milestones (10, 50, 100, 250, 500 tomatoes)
+- **Streak badges** - Earn badges for maintaining daily streaks (3, 7, 30, 100 days)
+- **Time-based badges** - Achieve badges for total focus time (10, 50, 100, 500 hours)
+- **Daily performance** - Special badges for productive days (Early Bird, Night Owl, Super Productive)
+- **Consistency badges** - Rewards for perfect weeks and monthly consistency
+
+### Features
+
+- **Real-time rewards** - See XP earned and badges unlocked immediately after completing sessions
+- **Achievement tracking** - View all badges with progress indicators showing how close you are to unlocking them
+- **Filtering & sorting** - Filter badges by status (earned/locked) and tier (bronze/silver/gold/platinum/diamond)
+- **Level milestones** - Track your journey through 10 unique levels, each with its own name and icon
+- **Export/Import** - Back up and restore your gamification progress
+- **Streak system** - Build daily streaks to earn bonus XP and unlock special streak badges
+
+Access the Achievements page from the extension panel to view your complete gamification profile, including level progress, earned badges, and statistics.
